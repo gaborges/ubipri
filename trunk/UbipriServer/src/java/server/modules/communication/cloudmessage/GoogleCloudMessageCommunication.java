@@ -16,7 +16,7 @@ import server.model.Action;
  *
  * @author guilherme
  */
-public class GoogleCloundMessage {
+public class GoogleCloudMessageCommunication {
     // é preciso criar um projeto no Google APIs e gerar uma key pra usar o Cloud Messaging. Essa é a key do projeto que criei
 
     private static String apiKey = "AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY";

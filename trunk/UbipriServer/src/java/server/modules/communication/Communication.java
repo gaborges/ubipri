@@ -4,6 +4,8 @@
  */
 package server.modules.communication;
 
+import java.util.ArrayList;
+import server.model.Action;
 import server.model.DeviceCommunication;
 import server.modules.privacy.PrivacyControlUbiquitous;
 
@@ -27,13 +29,13 @@ public class Communication {
         return ubiPri.onChangeCurrentUserLocalizationReturnActions(environmentId, userName,userPassword,deviceCode);
     }
     
-    public boolean sendActionsToDevice(String ip,String port,String jsonActions){
-        System.out.println("Ip: "+ip+" port: " + port + " actions: " +jsonActions );
+    public boolean sendActionsToDevice(DeviceCommunication devComm,ArrayList<Action> actions){
+        System.out.println("Ip: "+devComm.getAddress()+" port: " + devComm.getPort() + " num. actions: " +actions.size() );
         return true;
     }
     
-    public boolean sendActionsToDevice(DeviceCommunication devComm,String jsonActions){
-        System.out.println("Ip: "+devComm.getAddress()+" port: " + devComm.getPort() + " actions: " +jsonActions );
+    public boolean sendActionsToDevice(DeviceCommunication devComm,String message){
+        System.out.println("Ip: "+devComm.getAddress()+" port: " + devComm.getPort() + " actions: " +message );
         return true;
     }
     
