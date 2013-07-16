@@ -21,7 +21,7 @@ import server.modules.communication.Parameters;
  * @author guilherme
  */
 @Path("globalCommunication")
-public class GlobalCommunicationResource {
+public class WebServiceRestCommunication {
 
     @Context
     private UriInfo context;
@@ -29,7 +29,7 @@ public class GlobalCommunicationResource {
     /**
      * Creates a new instance of GlobalCommunicationResource
      */
-    public GlobalCommunicationResource() {
+    public WebServiceRestCommunication() {
     }
 
     /**
