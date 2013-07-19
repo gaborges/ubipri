@@ -17,6 +17,29 @@ import server.model.Action;
  * @author guilherme
  */
 public class GoogleCloudMessageCommunication {
+    
+    /*
+     * 
+     * 
+Param: state : String, [duration : String],[args : String]
+OBS: Entre aspas são opcionais. O args refere-se a um vetor de argumentos.
+Formato da mensagem:
+{
+"state":"on", 		// Os estados podem ser: on, off ou back. 
+"duration":"600", 	// Intervalo de tempo que a regra é válida, após retorna-se para 
+// o estado anterior
+"args": ["arg1", "arg2"] // Argumentos genéricos que podem ser utilizados para 
+  // casos particulares
+}
+
+Retorno: Resposta gerada pela API do GCM: Null se insucesso.
+Listagem das funcionalidades a serem utilizadas:
+messege.addData("WIFI_STATE","{\"state\":\"back\"}");
+messege.addData("BLUETOOTH_STATE","{\"state\":\"off\"}");
+messege.addData("VIBRATION_STATE","{\"state\":\"on\"}");
+messege.addData("RINGER_VOLUME_VALUE","{\"state\":\"on\",\"args\":[\"50\"]}");
+messege.addData("AIRPLANE_MODE_STATE","{\"state\":\"on\",\"duration\":\"360\"}");
+     */
     // é preciso criar um projeto no Google APIs e gerar uma key pra usar o Cloud Messaging. Essa é a key do projeto que criei
 
     private static String apiKey = "AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY";
