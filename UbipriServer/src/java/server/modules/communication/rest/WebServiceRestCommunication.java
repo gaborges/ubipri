@@ -20,7 +20,7 @@ import server.modules.communication.Parameters;
  *
  * @author guilherme
  */
-@Path("globalCommunication")
+@Path("rest")
 public class WebServiceRestCommunication {
 
     @Context
@@ -42,24 +42,56 @@ public class WebServiceRestCommunication {
         //TODO return proper representation object
         return "{hello:world}";
     }
+    
+    /**
+     * 1) Cadastro do código de comunicação por Google Cloud Message.
+     * Path: http://host:port/UbipriServer/webresources/rest/insert/communicationCode/gcm
+     * @param String userCode, String userPassword, String deviceCode, newCommunicationCode:String .
+     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
+     * @return Status of the operation in the Server.
+     * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
+     */
+    
+    /**
+     * 2) Cadastro do código de comunicação para Comunicações Genéricas. (Não implementado)
+     * Path: http://host:port/UbipriServer/webresources/rest/insert/communicationCode/generic
+     * @param String userCode, String userPassword, String deviceCode, newCommunicationCode:String, communicationType:int, communicationId :int.
+     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
+     * @return Status of the operation in the Server.
+     * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
+     */
+    
 
     /**
-     * PUT method for updating or creating an instance of GlobalCommunicationResource
-     * @param content representation for the resource
-     * @return an HTTP response with content of the updated or created resource.
+     * 3) Envio de atualização de localização, sem resposta de ações
+     * Path: http://host:port/UbipriServer/webresources/rest/change/location/json
+     * @param int environmentId, String userName, String userPassword, String deviceCode.
+     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "environmentId":1}
+     * @return Status of the operation in the Server.
+     * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
+    
     @PUT
-    @Path("/change/localization/json")
+    @Path("/change/location/json")
     @Consumes("application/json")
-    @Produces("text/plain") 
+    @Produces("application/json") 
     public String onChangeCurrentUserLocalization(Parameters p) {
         Communication comm = new Communication();
         return comm.onChangeCurrentUserLocalization(
                 p.getEnvironmentId(), p.getUserName(),p.getUserPassword(), p.getDeviceCode());
     }
     
+    /**
+     * 4) Envio de atualização de localização, com resposta de ações
+     * Path: http://host:port/UbipriServer/webresources/rest/change/location/json/response
+     * @param int environmentId, String userName, String userPassword, String deviceCode.
+     * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "environmentId":1}
+     * @return Status of the operation in the Server ("status" has three possible values: OK, ERROR or DENNY).
+     * The seconde parameter contais the actions to be returned.
+     * Message Format Return: {"status":"OK","actions":[{"fid":"1","action":"on"},{"fid":"3","action":"off"}]}
+     */    
     @PUT
-    @Path("/change/localization/json/response")
+    @Path("/change/location/json/response")
     @Consumes("application/json")
     @Produces("application/json")
     public String onChangeCurrentUserLocalizationWithResponse(Parameters p) {
@@ -68,6 +100,38 @@ public class WebServiceRestCommunication {
         return comm.onChangeCurrentUserLocalizationWithResponse(
                 p.getEnvironmentId(), p.getUserName(),p.getUserPassword(), p.getDeviceCode());
     }
+    
+    /**
+     * 5) Valida login do usuário
+     * Path: http://host:port/UbipriServer/webresources/rest/validate/user/login
+     * @param int environmentId, String userName, String userPassword, String deviceCode.
+     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "environmentId":1}
+     * @return Status of the operation in the Server.
+     * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
+     */
+    
+    /**
+     * 6) Buscar Ambientes
+     * Path: http://host:port/UbipriServer/webresources/rest/get/environment/map
+     * Consumes: application/json
+     * Produces: application/xml
+     * Method: GET
+     * @param Params: userName : String, userPassword : String, deviceCode : String, [latitude : double], [longitude : double],[simbolicBaseEnvironment : String].
+     * Message Format: Message format: { "userName":"bruno", "userPassword":"12345", "deviceCode":"4444444444"", "latitude ":"-30.00002313", "longitude ":"-51.76672364","simbolicBaseEnvironment ":"Porto Alegre"}
+     * @return Mapped environments with XML.
+     * Return Message Format: <>xml com elementos - pegar do eclipse</>
+     */
+    
+    /**
+     * 7) Envio de atualização de localização, por provedor de localização, sem resposta de ações (GUILHERME)
+     * Descrição: Método utilizado para atualizar a localização de um dispositivo e de um usuário através de um provedor, RFID com arduino pode ser um exemplo.
+     * Path: http://host:port/UbipriServer/webresources/rest/change/location/json/provider
+     * @param environmentId : int , userName : String, userPassword : String, deviceCode : String, providerCode : String.
+     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "environmentId":1,"providerCode ":"876541112"}
+     * @return Status of the operation in the Server.
+     * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
+     */
+    
     
     
 }
