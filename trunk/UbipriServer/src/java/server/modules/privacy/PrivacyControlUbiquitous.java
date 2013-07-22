@@ -256,7 +256,7 @@ public class PrivacyControlUbiquitous {
     }
 
     private String makeMessage(ArrayList<Action> actions, String status) {
-        String json = "{\"status\":\"" + status + "\",\"Actions\":[";
+        String json = "{\"status\":\"" + status + "\",\"actions\":[";
         for (int i = 0; i < actions.size();i++) {
             json += "{\"fid\":" + actions.get(i).getFunctionality().getId() 
                     + ",\"action\":\"" + actions.get(i).getAction() + "\"}";
