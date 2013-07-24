@@ -11,9 +11,12 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
+import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import server.modules.communication.Communication;
+import server.modules.communication.InsertCommunicationCodeParameters;
 import server.modules.communication.Parameters;
+import server.modules.communication.RemoteLoginParameters;
 
 /**
  * REST Web Service
@@ -46,22 +49,37 @@ public class WebServiceRestCommunication {
     /**
      * 1) Cadastro do código de comunicação por Google Cloud Message.
      * Path: http://host:port/UbipriServer/webresources/rest/insert/communicationCode/gcm
-     * @param String userCode, String userPassword, String deviceCode, newCommunicationCode:String .
-     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
+     * @param String userName, String userPassword, String deviceCode, newCommunicationCode:String .
+     * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
      * @return Status of the operation in the Server.
      * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
+    
+    @POST
+    @Path("/insert/communicationCode/gcm")
+    @Consumes("application/json")
+    @Produces("application/json") 
+    public String insertGoogleCloudMessageCommunicationCode(InsertCommunicationCodeParameters p) {
+        Communication comm = new Communication();
+        return comm.onInsertNewCommunicationCode(
+                p.getUserName(),
+                p.getUserPassword(), 
+                p.getDeviceCode(),
+                p.getCommunicationCode(),
+                4,      // Google Cloud Message
+                -1);    // O primeiro que encontrar
+    }
     
     /**
      * 2) Cadastro do código de comunicação para Comunicações Genéricas. (Não implementado)
      * Path: http://host:port/UbipriServer/webresources/rest/insert/communicationCode/generic
-     * @param String userCode, String userPassword, String deviceCode, newCommunicationCode:String, communicationType:int, communicationId :int.
-     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
+     * @param String userName, String userPassword, String deviceCode, newCommunicationCode:String, communicationType:int, communicationId :int.
+     * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
      * @return Status of the operation in the Server.
      * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
     
-
+    
     /**
      * 3) Envio de atualização de localização, sem resposta de ações
      * Path: http://host:port/UbipriServer/webresources/rest/change/location/json
@@ -104,11 +122,32 @@ public class WebServiceRestCommunication {
     /**
      * 5) Valida login do usuário
      * Path: http://host:port/UbipriServer/webresources/rest/validate/user/login
-     * @param int environmentId, String userName, String userPassword, String deviceCode.
-     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "environmentId":1}
+     * @param String userName, String userPassword, String deviceCode.
+     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa"}
      * @return Status of the operation in the Server.
      * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
+    
+    @GET
+    @Path("/validate/user/login")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String validateRemoteLoginUser(RemoteLoginParameters p) {
+        Communication comm = new Communication();
+        return comm.validateRemoteLoginUser(p.getUserName(), p.getUserPassword(), p.getDeviceCode());
+    }
+    
+    @GET
+    @Path("/validate/{login}/{password}/{device}")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String validateRemoteLoginUser(
+            @PathParam("login")String userName,
+            @PathParam("password")String userPassword,
+            @PathParam("device")String deviceCode) {
+        Communication comm = new Communication();
+        return comm.validateRemoteLoginUser(userName, userPassword, deviceCode);
+    }
     
     /**
      * 6) Buscar Ambientes

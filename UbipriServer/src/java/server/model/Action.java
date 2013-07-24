@@ -16,11 +16,32 @@ public class Action {
     private Functionality functionality;
     private Environment environment; // Caso o ambiente seja customizado
     private String action;
+    private long duration;
+    private String args[];
     private Date startDate;
     private Date endDate;
     private Integer startDailyInterval;
     private Integer endDailyInterval;
-    
+
+    public Action() {
+        this.duration = -1;
+    }
+
+    public long getDuration() {
+        return duration;
+    }
+
+    public void setDuration(long duraction) {
+        this.duration = duraction;
+    }
+
+    public String[] getArgs() {
+        return args;
+    }
+
+    public void setArgs(String[] args) {
+        this.args = args;
+    }
 
     public AccessLevel getAccessLevel() {
         return accessLevel;
