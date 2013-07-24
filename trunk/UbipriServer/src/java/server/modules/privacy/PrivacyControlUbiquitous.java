@@ -60,17 +60,17 @@ public class PrivacyControlUbiquitous {
     public boolean onChangeCurrentUserLocalization(int environmentId, String userName, String userPassword, String deviceCode) {
         return false; // falta implementar
     }
-
+    
     public String onChangeCurrentUserLocalizationWithReturnAsynchronousActions(int environmentId, String userName, String userPassword, String deviceCode) {
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
-            return "[{\"status\":\"DENY\"}]"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
+            return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
         boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
         boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
         // se nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente
         if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
-            return "[{\"status\":\"OK\"}]";
+            return "{\"status\":\"OK\"}";
         }
         // Verifica se o usuário continua no mesmo ambiente, se sim continua, senão retorna status OK
         if (hasChandedUserLocation) {
@@ -104,19 +104,29 @@ public class PrivacyControlUbiquitous {
         // adiciona o status OK e o json das ações em uma única mensagem
         makeAndSendMessage(dev.getPreferredDeviceCommunication(), actions); // Em breve enviar todas as comunicações
         // retorna mensagem
-        return "[{\"status\":\"OK\"}]";
+        return "{\"status\":\"OK\"}";
     }
+    
+    public String validateRemoteLoginUser(String userName, String userPassword, String deviceCode){
+        // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
+        if (!this.userHasAccessPermission(userName, userPassword)) {
+            return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
+        }
+        // Futuramente é possível adicionar a funcionalidade de ver se o usuário tem permissão de usar o dispositivo
+        return "{\"status\":\"OK\"}";
+    }
+    
 
     public String onChangeCurrentUserLocalizationReturnActions(int environmentId, String userName, String userPassword, String deviceCode) {
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
-            return "[{\"status\":\"DENY\"}]"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
+            return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
         boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
         boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
         // se nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente
         if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
-            return "[{\"status\":\"OK\"}]";
+            return "{\"status\":\"OK\"}";
         }
         // Verifica se o usuário continua no mesmo ambiente, se sim continua, senão retorna status OK
         if (hasChandedUserLocation) {
@@ -244,7 +254,7 @@ public class PrivacyControlUbiquitous {
     }
 
     private boolean makeAndSendMessage(DeviceCommunication deviceCommunication, ArrayList<Action> actions) {
-        if (this.communication.sendActionsToDevice(deviceCommunication, makeMessage(actions))) {
+        if (this.communication.sendActionsToDevice(deviceCommunication, actions)) {
             return true;
         } else {
             return false;
@@ -315,5 +325,20 @@ public class PrivacyControlUbiquitous {
 
     private boolean hasChangedDeviceEnvironment(String deviceCode, int environmentId) {
         return this.devDAO.hasChangedDeviceEnvironment(deviceCode, environmentId);
+    }
+
+    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId) {
+        // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
+        if (!this.userHasAccessPermission(userName, userPassword)) {
+            return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
+        }
+        // verifica se não é para nenhum
+        if(this.devDAO.onInsertCommunicationCode(
+                deviceCode,
+                communicationCode,
+                communicationType,      // Google Cloud Message
+                communicationId)){    // O primeiro que encontrar
+            return "{\"status\":\"OK\"}";
+        } else { return "{\"status\":\"ERROR\"}";}
     }
 }
