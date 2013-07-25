@@ -77,7 +77,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -100,7 +100,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -128,7 +128,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -181,7 +181,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return device;
@@ -225,7 +225,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return device;
@@ -300,7 +300,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -374,7 +374,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -425,7 +425,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -459,7 +459,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -480,7 +480,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -507,7 +507,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return false;
@@ -535,7 +535,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return false;
@@ -586,7 +586,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }

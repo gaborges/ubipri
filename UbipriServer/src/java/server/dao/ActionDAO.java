@@ -21,6 +21,7 @@ import server.model.Functionality;
 import server.model.LocalizationType;
 import server.util.AccessBD;
 import server.util.Config;
+import server.util.SingleConnection;
 
 /**
  *
@@ -38,11 +39,7 @@ public class ActionDAO {
      * dentro da classe server.util.Config;
      */
     public ActionDAO() {
-        db = new AccessBD(
-                Config.dbServer, // IP do Servidor
-                Config.dbName, // Nome do Banco de dados
-                Config.dbUser, // Usuário
-                Config.dbPassword); // Senha
+        db = SingleConnection.getAccessDB();
     }
 
     /**
@@ -72,7 +69,7 @@ public class ActionDAO {
     public void insert(Action o) {
         String sql =
                 " INSERT INTO actions (accessLevel_id,functionality_id,custom_environment_id,act_action, "
-                + " act_start_date,act_end_date,act_start_daily_interval,act_end_daily_interval) "
+                + " act_start_date,act_end_date,act_start_daily_interval,act_interval_duration) "
                 + " VALUES (?,?,?,?,?,?,?,?); ";
         this.db.conectar();
         try {
@@ -110,7 +107,7 @@ public class ActionDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -126,7 +123,7 @@ public class ActionDAO {
     public void update(Action o) {
         String sql =
                 " UPDATE actions SET act_action = ? , act_start_date = ?, act_end_date = ? ,  "
-                + " act_start_daily_interval = ? , act_end_daily_interval = ? , custom_environment_id = ? "
+                + " act_start_daily_interval = ? , act_interval_duration = ? , custom_environment_id = ? "
                 + " WHERE act_id = ? ;";
         this.db.conectar();
         try {
@@ -141,7 +138,7 @@ public class ActionDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -189,14 +186,14 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_interval_duration"));
                 temp.setId(actionId);
 
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -244,7 +241,7 @@ public class ActionDAO {
             if (all || (begin == -1) || (limit == -1)) {
                 sql =
                         " SELECT act_id,act_action,acclev_impact_factor,act_start_date,act_end_date,act_start_daily_interval,"
-                        + " act_end_daily_interval, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
+                        + " act_interval_duration, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
                         + " environment_type_id, access_type_id, envtyp_name, acctyp_name "
                         + " FROM actions, functionality, environment_type, access_type, access_level "
                         + " WHERE environment_type_id = envtyp_id AND functionality_id = fun_id "
@@ -252,7 +249,7 @@ public class ActionDAO {
                 pstmt = getConnection().prepareStatement(sql);
             } else {
                 sql = " SELECT act_id, act_action,acclev_impact_factor,act_start_date,act_end_date,act_start_daily_interval,"
-                        + " act_end_daily_interval, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
+                        + " act_interval_duration, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
                         + " environment_type_id, access_type_id, envtyp_name, acctyp_name "
                         + " FROM actions, functionality, environment_type, access_type, access_level "
                         + " WHERE environment_type_id = envtyp_id AND functionality_id = fun_id "
@@ -281,7 +278,7 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_interval_duration"));
                 temp.setId(rs.getInt("act_id"));
 
                 list.add(temp);
@@ -289,7 +286,7 @@ public class ActionDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -304,7 +301,7 @@ public class ActionDAO {
         this.db.conectar();
         try {
             sql = " SELECT act_id,act_action,acclev_impact_factor,act_start_date,act_end_date,act_start_daily_interval,"
-                    + " act_end_daily_interval, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
+                    + " act_interval_duration, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
                     + " environment_type_id, access_type_id, envtyp_name, acctyp_name "
                     + " FROM actions, functionality, environment_type, access_type, access_level "
                     + " WHERE environment_type_id = envtyp_id AND functionality_id = fun_id "
@@ -331,7 +328,7 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_interval_duration"));
                 temp.setId(rs.getInt("act_id"));
 
                 list.add(temp);
@@ -339,7 +336,7 @@ public class ActionDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -358,7 +355,7 @@ public class ActionDAO {
         this.db.conectar();
         try {
             sql = " SELECT act_id,act_action,acclev_impact_factor,act_start_date,act_end_date,act_start_daily_interval,"
-                    + " act_end_daily_interval, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
+                    + " act_interval_duration, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
                     + " environment_type_id, access_type_id, envtyp_name, acctyp_name "
                     + " FROM actions, functionality, environment_type, access_type, access_level "
                     + " WHERE environment_type_id = envtyp_id AND functionality_id = fun_id "
@@ -384,7 +381,7 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_interval_duration"));
                 temp.setId(rs.getInt("act_id"));
 
                 list.add(temp);
@@ -434,7 +431,7 @@ public class ActionDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         accessLevel.setActionsList(list);
@@ -451,9 +448,9 @@ public class ActionDAO {
 
         this.db.conectar();
         try {
-            pstmt = getConnection().prepareStatement(sql);
+            PreparedStatement pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, action.getId());
-            rs = pstmt.executeQuery();
+            ResultSet rs = pstmt.executeQuery();
             if (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
                 // Vai para o próximo registro, no caso o 1º registro
                 list.add( 
@@ -464,7 +461,7 @@ public class ActionDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;

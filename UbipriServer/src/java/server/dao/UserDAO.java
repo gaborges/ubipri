@@ -15,6 +15,7 @@ import server.model.User;
 import server.model.UserEnvironment;
 import server.util.AccessBD;
 import server.util.Config;
+import server.util.SingleConnection;
 
 /**
  *
@@ -32,11 +33,7 @@ public class UserDAO {
      * dentro da classe server.util.Config;
      */
     public UserDAO() {
-        db = new AccessBD(
-                Config.dbServer, // IP do Servidor
-                Config.dbName, // Nome do Banco de dados
-                Config.dbUser, // Usuário
-                Config.dbPassword); // Senha
+        db = SingleConnection.getAccessDB();
     }
 
     /**
@@ -98,7 +95,7 @@ public class UserDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -126,7 +123,7 @@ public class UserDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -148,7 +145,7 @@ public class UserDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -164,7 +161,7 @@ public class UserDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -220,7 +217,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -262,7 +259,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -337,7 +334,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -394,7 +391,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -440,7 +437,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -471,7 +468,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return false;
@@ -500,7 +497,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return false;
@@ -548,7 +545,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -580,7 +577,7 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp; 

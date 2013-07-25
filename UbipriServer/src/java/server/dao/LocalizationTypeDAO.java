@@ -73,7 +73,7 @@ public class LocalizationTypeDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -96,7 +96,7 @@ public class LocalizationTypeDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -122,7 +122,7 @@ public class LocalizationTypeDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -169,7 +169,7 @@ public class LocalizationTypeDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -232,7 +232,7 @@ public class LocalizationTypeDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;

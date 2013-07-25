@@ -20,6 +20,7 @@ import server.model.Functionality;
 import server.model.LocalizationType;
 import server.util.AccessBD;
 import server.util.Config;
+import server.util.SingleConnection;
 
 /**
  *
@@ -37,11 +38,7 @@ public class AccessLevelDAO {
      * dentro da classe server.util.Config;
      */
     public AccessLevelDAO() {
-        db = new AccessBD(
-                Config.dbServer, // IP do Servidor
-                Config.dbName, // Nome do Banco de dados
-                Config.dbUser, // Usuário
-                Config.dbPassword); // Senha
+        db = SingleConnection.getAccessDB();
     }
 
     /**
@@ -80,7 +77,7 @@ public class AccessLevelDAO {
             pstmt.setInt(3, o.getAccessType().getId());
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -103,7 +100,7 @@ public class AccessLevelDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -130,7 +127,7 @@ public class AccessLevelDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -174,7 +171,7 @@ public class AccessLevelDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -210,7 +207,7 @@ public class AccessLevelDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return temp;
@@ -288,7 +285,7 @@ public class AccessLevelDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
