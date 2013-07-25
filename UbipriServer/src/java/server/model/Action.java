@@ -4,6 +4,7 @@
  */
 package server.model;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 /**
@@ -17,11 +18,11 @@ public class Action {
     private Environment environment; // Caso o ambiente seja customizado
     private String action;
     private long duration;
-    private String args[];
+    private ArrayList<ActionArgs> args;
     private Date startDate;
     private Date endDate;
     private Integer startDailyInterval;
-    private Integer endDailyInterval;
+    private Integer durationInterval;
 
     public Action() {
         this.duration = -1;
@@ -35,11 +36,11 @@ public class Action {
         this.duration = duraction;
     }
 
-    public String[] getArgs() {
+    public ArrayList<ActionArgs> getArgs() {
         return args;
     }
 
-    public void setArgs(String[] args) {
+    public void setArgs(ArrayList<ActionArgs> args) {
         this.args = args;
     }
 
@@ -99,12 +100,12 @@ public class Action {
         this.startDailyInterval = startDailyInterval;
     }
 
-    public Integer getEndDailyInterval() {
-        return endDailyInterval;
+    public Integer getDurationInterval() {
+        return durationInterval;
     }
 
-    public void setEndDailyInterval(Integer endDailyInterval) {
-        this.endDailyInterval = endDailyInterval;
+    public void setDurationInterval(Integer endDailyInterval) {
+        this.durationInterval = endDailyInterval;
     }
 
     public Integer getId() {

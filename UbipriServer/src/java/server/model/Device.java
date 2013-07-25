@@ -92,10 +92,12 @@ public class Device {
     public DeviceCommunication getPreferredDeviceCommunication() {
         int i, preferredIndex = deviceCommunications.size();
         for(i=0; i < this.deviceCommunications.size();i++){
-            if(preferredIndex < this.deviceCommunications.get(i).getPreferredOrder()){
+            if(preferredIndex > this.deviceCommunications.get(i).getPreferredOrder()){
                 preferredIndex = this.deviceCommunications.get(i).getPreferredOrder();
             }
+            System.out.println("");
         }
+        System.out.println("Achou: "+preferredIndex);
         return this.deviceCommunications.get(preferredIndex);
     }
     

@@ -10,7 +10,7 @@ package server.util;
  */
 public class Config {
     public static String dbName     = "localizaPos4";
-    public static String dbServer   = "127.0.0.1";
+    public static String dbServer   = "localhost";
     public static String dbUser     = "postgres";
     public static String dbPassword = "postgres";
     public static boolean debugSQL  = false;
