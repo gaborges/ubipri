@@ -46,7 +46,7 @@ public class TestDefaultActionDAO {
                 + ",precision:"+d.getEnvironment().getLocalizationType().getPrecision()+",metric:"+d.getEnvironment().getLocalizationType().getMetric()+"}"
                 + " Environment {id:"+d.getEnvironment().getId()+",name:"+d.getEnvironment().getName()+",latitude:"+d.getEnvironment().getLatitude()+",longitude:"+d.getEnvironment().getLongitude()+"}\n"
                 + " Father of Environment: " + ( (d.getEnvironment().getParentEnvironment()== null) ? "Não possui\n" : "{id:"+d.getEnvironment().getParentEnvironment().getId()+",name:"+d.getEnvironment().getParentEnvironment().getName()+"}\n")
-                + " Default Action {action:"+d.getAction()+",startDate:"+d.getStartDate()+",endDate:"+d.getEndDate()+",startInterval:"+d.getStartDailyInterval()+",endInterval:"+d.getEndDailyInterval()+"}");
+                + " Default Action {action:"+d.getAction()+",startDate:"+d.getStartDate()+",endDate:"+d.getEndDate()+",startInterval:"+d.getStartDailyInterval()+",endInterval:"+d.getDurationInterval()+"}");
     }
 
     public static void testGetAll() {
@@ -58,7 +58,7 @@ public class TestDefaultActionDAO {
                 + ",precision:"+d.getEnvironment().getLocalizationType().getPrecision()+",metric:"+d.getEnvironment().getLocalizationType().getMetric()+"}"
                 + " Environment {id:"+d.getEnvironment().getId()+",name:"+d.getEnvironment().getName()+",latitude:"+d.getEnvironment().getLatitude()+",longitude:"+d.getEnvironment().getLongitude()+"}\n"
                 + " Father of Environment: " + ( (d.getEnvironment().getParentEnvironment()== null) ? "Não possui\n" : "{id:"+d.getEnvironment().getParentEnvironment().getId()+",name:"+d.getEnvironment().getParentEnvironment().getName()+"}\n")
-                + " Default Action {action:"+d.getAction()+",startDate:"+d.getStartDate()+",endDate:"+d.getEndDate()+",startInterval:"+d.getStartDailyInterval()+",endInterval:"+d.getEndDailyInterval()+"}");
+                + " Default Action {action:"+d.getAction()+",startDate:"+d.getStartDate()+",endDate:"+d.getEndDate()+",startInterval:"+d.getStartDailyInterval()+",endInterval:"+d.getDurationInterval()+"}");
             System.out.println("**********************");
         }
     }
@@ -72,7 +72,7 @@ public class TestDefaultActionDAO {
                 + ",precision:"+d.getEnvironment().getLocalizationType().getPrecision()+",metric:"+d.getEnvironment().getLocalizationType().getMetric()+"}"
                 + " Environment {id:"+d.getEnvironment().getId()+",name:"+d.getEnvironment().getName()+",latitude:"+d.getEnvironment().getLatitude()+",longitude:"+d.getEnvironment().getLongitude()+"}\n"
                 + " Father of Environment: " + ( (d.getEnvironment().getParentEnvironment()== null) ? "Não possui\n" : "{id:"+d.getEnvironment().getParentEnvironment().getId()+",name:"+d.getEnvironment().getParentEnvironment().getName()+"}\n")
-                + " Default Action {action:"+d.getAction()+",startDate:"+d.getStartDate()+",endDate:"+d.getEndDate()+",startInterval:"+d.getStartDailyInterval()+",endInterval:"+d.getEndDailyInterval()+"}");
+                + " Default Action {action:"+d.getAction()+",startDate:"+d.getStartDate()+",endDate:"+d.getEndDate()+",startInterval:"+d.getStartDailyInterval()+",endInterval:"+d.getDurationInterval()+"}");
             System.out.println("**********************");
         }
     }

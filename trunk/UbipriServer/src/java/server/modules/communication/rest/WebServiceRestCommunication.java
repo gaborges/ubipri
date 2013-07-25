@@ -17,6 +17,7 @@ import server.modules.communication.Communication;
 import server.modules.communication.InsertCommunicationCodeParameters;
 import server.modules.communication.Parameters;
 import server.modules.communication.RemoteLoginParameters;
+import server.modules.privacy.PrivacyControlUbiquitous;
 
 /**
  * REST Web Service
@@ -60,7 +61,7 @@ public class WebServiceRestCommunication {
     @Consumes("application/json")
     @Produces("application/json") 
     public String insertGoogleCloudMessageCommunicationCode(InsertCommunicationCodeParameters p) {
-        Communication comm = new Communication();
+        Communication comm = new Communication(new PrivacyControlUbiquitous());
         return comm.onInsertNewCommunicationCode(
                 p.getUserName(),
                 p.getUserPassword(), 
@@ -94,7 +95,7 @@ public class WebServiceRestCommunication {
     @Consumes("application/json")
     @Produces("application/json") 
     public String onChangeCurrentUserLocalization(Parameters p) {
-        Communication comm = new Communication();
+        Communication comm = new Communication(new PrivacyControlUbiquitous());
         return comm.onChangeCurrentUserLocalization(
                 p.getEnvironmentId(), p.getUserName(),p.getUserPassword(), p.getDeviceCode());
     }
@@ -113,7 +114,7 @@ public class WebServiceRestCommunication {
     @Consumes("application/json")
     @Produces("application/json")
     public String onChangeCurrentUserLocalizationWithResponse(Parameters p) {
-        Communication comm = new Communication();
+        Communication comm = new Communication(new PrivacyControlUbiquitous());
         //System.out.println("{"+p.getDeviceCode()+","+p.getUserName()+","+p.getEnvironmentId()+"}");
         return comm.onChangeCurrentUserLocalizationWithResponse(
                 p.getEnvironmentId(), p.getUserName(),p.getUserPassword(), p.getDeviceCode());
@@ -121,31 +122,20 @@ public class WebServiceRestCommunication {
     
     /**
      * 5) Valida login do usuário
-     * Path: http://host:port/UbipriServer/webresources/rest/validate/user/login
-     * @param String userName, String userPassword, String deviceCode.
-     * Message Format: {"userCode":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa"}
+     * Path: http://host:port/UbipriServer/webresources/rest/validate/{login}/{password}/{device}
+     * @param String userName, String userPassword, String deviceName.
+     * Message Format: http://host:port/UbipriServer/webresources/rest/validate/{user_name}/{login}/{deviceCode}
      * @return Status of the operation in the Server.
      * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
-    
-    @GET
-    @Path("/validate/user/login")
-    @Consumes("application/json")
-    @Produces("application/json")
-    public String validateRemoteLoginUser(RemoteLoginParameters p) {
-        Communication comm = new Communication();
-        return comm.validateRemoteLoginUser(p.getUserName(), p.getUserPassword(), p.getDeviceCode());
-    }
-    
     @GET
     @Path("/validate/{login}/{password}/{device}")
-    @Consumes("application/json")
     @Produces("application/json")
     public String validateRemoteLoginUser(
             @PathParam("login")String userName,
             @PathParam("password")String userPassword,
             @PathParam("device")String deviceCode) {
-        Communication comm = new Communication();
+        Communication comm = new Communication(new PrivacyControlUbiquitous());
         return comm.validateRemoteLoginUser(userName, userPassword, deviceCode);
     }
     

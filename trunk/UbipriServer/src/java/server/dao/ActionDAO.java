@@ -14,6 +14,7 @@ import java.util.Date;
 import server.model.AccessLevel;
 import server.model.AccessType;
 import server.model.Action;
+import server.model.ActionArgs;
 import server.model.Environment;
 import server.model.EnvironmentType;
 import server.model.Functionality;
@@ -83,7 +84,7 @@ public class ActionDAO {
             pstmt.setTimestamp(5, o.getEndDate() == null ? null : new Timestamp(o.getStartDate().getTime()));
             pstmt.setTimestamp(6, o.getEndDate() == null ? null : new Timestamp(o.getEndDate().getTime()));
             pstmt.setInt(7, o.getStartDailyInterval());
-            pstmt.setInt(8, o.getEndDailyInterval());
+            pstmt.setInt(8, o.getDurationInterval());
             pstmt.close();
         } catch (SQLException e) {
             System.out.println(e);
@@ -134,7 +135,7 @@ public class ActionDAO {
             pstmt.setTimestamp(2, o.getEndDate() == null ? null : new Timestamp(o.getStartDate().getTime()));
             pstmt.setTimestamp(3, o.getEndDate() == null ? null : new Timestamp(o.getEndDate().getTime()));
             pstmt.setInt(4, o.getStartDailyInterval());
-            pstmt.setInt(5, o.getEndDailyInterval());
+            pstmt.setInt(5, o.getDurationInterval());
             pstmt.setInt(6, o.getEnvironment() == null ? -1 : o.getEnvironment().getId());
             pstmt.setInt(7, o.getId());
             pstmt.execute();
@@ -188,7 +189,7 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setEndDailyInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
                 temp.setId(actionId);
 
             }
@@ -280,7 +281,7 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setEndDailyInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
                 temp.setId(rs.getInt("act_id"));
 
                 list.add(temp);
@@ -330,7 +331,7 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setEndDailyInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
                 temp.setId(rs.getInt("act_id"));
 
                 list.add(temp);
@@ -383,7 +384,7 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setEndDailyInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_end_daily_interval"));
                 temp.setId(rs.getInt("act_id"));
 
                 list.add(temp);
@@ -405,7 +406,7 @@ public class ActionDAO {
         this.db.conectar();
         try {
             sql = " SELECT act_id,act_action,act_start_date,act_end_date,act_start_daily_interval, "
-                    + " act_end_daily_interval, fun_name, fun_id, custom_environment_id "
+                    + " act_interval_duration, fun_name, fun_id, custom_environment_id "
                     + " FROM actions, functionality"
                     + " WHERE functionality_id = fun_id AND access_level_id = ? ;";
             pstmt = getConnection().prepareStatement(sql);
@@ -424,8 +425,9 @@ public class ActionDAO {
                 temp.setStartDate(new Date(rs.getTimestamp("act_start_date").getTime()));
                 temp.setEndDate(rs.getTimestamp("act_end_date") == null ? null : new Date(rs.getTimestamp("defact_end_date").getTime()));
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
-                temp.setEndDailyInterval(rs.getInt("act_end_daily_interval"));
+                temp.setDurationInterval(rs.getInt("act_interval_duration"));
                 temp.setId(rs.getInt("act_id"));
+                temp.setArgs(getActionArgs(temp));
 
                 list.add(temp);
             }
@@ -436,6 +438,35 @@ public class ActionDAO {
         }
         this.db.desconectar();
         accessLevel.setActionsList(list);
+        return list;
+    }
+    
+    private ArrayList<ActionArgs> getActionArgs(Action action){
+        ArrayList<ActionArgs> list = new ArrayList<ActionArgs>();
+         String  temp = "" , sql = "";
+         int i = 0;
+        sql = " SELECT actarg_id, actarg_label, actarg_value "
+                + " FROM actions_args "
+                + " WHERE action_id = ?;";
+
+        this.db.conectar();
+        try {
+            pstmt = getConnection().prepareStatement(sql);
+            pstmt.setInt(1, action.getId());
+            rs = pstmt.executeQuery();
+            if (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
+                // Vai para o próximo registro, no caso o 1º registro
+                list.add( 
+                 new ActionArgs(rs.getInt("actarg_id"),rs.getString("actarg_label"),
+                         rs.getString("actarg_value")));            
+                
+            }
+            rs.close();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println(e);
+        }
+        this.db.desconectar();
         return list;
     }
 }

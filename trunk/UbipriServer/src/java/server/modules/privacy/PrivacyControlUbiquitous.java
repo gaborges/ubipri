@@ -24,6 +24,7 @@ import server.model.LogEvent;
 import server.model.User;
 import server.model.UserEnvironment;
 import server.modules.communication.Communication;
+import server.util.AccessBD;
 import server.util.Config;
 
 /**
@@ -41,11 +42,16 @@ public class PrivacyControlUbiquitous {
     private AccessLevelDAO accLevDAO;
 
     public PrivacyControlUbiquitous() {
-        this.userDAO = new UserDAO();
-        this.envDAO = new EnvironmentDAO();
-        this.actDAO = new ActionDAO();
-        this.devDAO = new DeviceDAO();
-        this.accLevDAO = new AccessLevelDAO();
+        AccessBD db = new AccessBD(
+                Config.dbServer, // IP do Servidor
+                Config.dbName, // Nome do Banco de dados
+                Config.dbUser, // Usuário
+                Config.dbPassword); // Senha
+        this.userDAO = new UserDAO(db);
+        this.envDAO = new EnvironmentDAO(db);
+        this.actDAO = new ActionDAO(db);
+        this.devDAO = new DeviceDAO(db);
+        this.accLevDAO = new AccessLevelDAO(db);
         this.communication = new Communication();
     }
 

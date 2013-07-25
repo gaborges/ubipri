@@ -19,10 +19,9 @@ public class Communication {
     
     private PrivacyControlUbiquitous ubiPri;
 
-    public Communication() {
-        ubiPri = new PrivacyControlUbiquitous();
+    public Communication() {        
     }
-
+    
     public Communication(PrivacyControlUbiquitous ubiPri) {
         this.ubiPri = ubiPri;
     }
@@ -83,11 +82,14 @@ public class Communication {
             json = "{\"state\":\""+ actions.get(i).getAction() +"\"";
             if(actions.get(i).getDuration() > 0)
                 json += ",\"duration\":\"" + String.valueOf(actions.get(i).getDuration()) + "\"";
-            if(actions.get(i).getArgs().length > 0){
+            if(actions.get(i).getArgs().size() > 0){
                 json += ",\"args\":[";
-                for(int j = 0; j < actions.get(i).getArgs().length;j++){
-                     json += "\"" + actions.get(i).getArgs()[i] + "\"";
-                     if(j != (actions.get(i).getArgs().length-1)) json += ",";
+                for(int j = 0; j < actions.get(i).getArgs().size();j++){
+                     if(!actions.get(i).getArgs().get(j).getLabel().isEmpty()) {
+                         json += "\"" + actions.get(i).getArgs().get(j).getLabel() + "\":";
+                     }
+                     json += "\"" + actions.get(i).getArgs().get(j).getValue() + "\"";
+                     if(j != (actions.get(i).getArgs().size()-1)) json += ",";
                 }
             }
             json += "}";
@@ -121,10 +123,12 @@ public class Communication {
     }
     
     public String validateRemoteLoginUser(String userName, String userPassword, String deviceCode){
+        ubiPri.setCommunication(this);
         return this.ubiPri.validateRemoteLoginUser(userName, userPassword, deviceCode);
     }
 
     public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId) {
+        ubiPri.setCommunication(this);
         return this.ubiPri.onInsertNewCommunicationCode(
                 userName,
                 userPassword, 
