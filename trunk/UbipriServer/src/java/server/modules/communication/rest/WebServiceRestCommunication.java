@@ -53,7 +53,7 @@ public class WebServiceRestCommunication {
      * @param String userName, String userPassword, String deviceCode, newCommunicationCode:String .
      * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
      * @return Status of the operation in the Server.
-     * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
+     * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENY"}
      */
     
     @POST

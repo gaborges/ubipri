@@ -26,6 +26,7 @@ import server.model.UserEnvironment;
 import server.modules.communication.Communication;
 import server.util.AccessBD;
 import server.util.Config;
+import server.util.SingleConnection;
 
 /**
  * Colocar como Estático talvez
@@ -42,11 +43,12 @@ public class PrivacyControlUbiquitous {
     private AccessLevelDAO accLevDAO;
 
     public PrivacyControlUbiquitous() {
-        AccessBD db = new AccessBD(
-                Config.dbServer, // IP do Servidor
-                Config.dbName, // Nome do Banco de dados
-                Config.dbUser, // Usuário
-                Config.dbPassword); // Senha
+        AccessBD db = SingleConnection.getAccessDB();
+//                new AccessBD(
+//                Config.dbServer, // IP do Servidor
+//                Config.dbName, // Nome do Banco de dados
+//                Config.dbUser, // Usuário
+//                Config.dbPassword); // Senha
         this.userDAO = new UserDAO(db);
         this.envDAO = new EnvironmentDAO(db);
         this.actDAO = new ActionDAO(db);

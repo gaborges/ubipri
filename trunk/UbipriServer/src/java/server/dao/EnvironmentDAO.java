@@ -18,6 +18,7 @@ import server.model.LogEvent;
 import server.model.User;
 import server.util.AccessBD;
 import server.util.Config;
+import server.util.SingleConnection;
 
 /**
  *
@@ -35,11 +36,7 @@ public class EnvironmentDAO {
      * dentro da classe server.util.Config;
      */
     public EnvironmentDAO() {
-        db = new AccessBD(
-                Config.dbServer, // IP do Servidor
-                Config.dbName, // Nome do Banco de dados
-                Config.dbUser, // Usuário
-                Config.dbPassword); // Senha
+        db = SingleConnection.getAccessDB();
     }
 
     /**
@@ -81,7 +78,7 @@ public class EnvironmentDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -104,7 +101,7 @@ public class EnvironmentDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -135,7 +132,7 @@ public class EnvironmentDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
@@ -193,7 +190,7 @@ public class EnvironmentDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return environment;
@@ -277,7 +274,7 @@ public class EnvironmentDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
         return list;
@@ -308,7 +305,7 @@ public class EnvironmentDAO {
             pstmt.close();
             
         } catch (SQLException e) {
-            System.out.println(e);
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
         this.db.desconectar();
     }
