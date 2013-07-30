@@ -90,15 +90,17 @@ public class Device {
     }
 
     public DeviceCommunication getPreferredDeviceCommunication() {
-        int i, preferredIndex = deviceCommunications.size();
+        int i, preferredIndex = deviceCommunications.size(), 
+                preferedOrder = 0;
+        
         for(i=0; i < this.deviceCommunications.size();i++){
             if(preferredIndex > this.deviceCommunications.get(i).getPreferredOrder()){
                 preferredIndex = this.deviceCommunications.get(i).getPreferredOrder();
+                preferedOrder = i;
             }
-            System.out.println("");
         }
-        System.out.println("Achou: "+preferredIndex);
-        return this.deviceCommunications.get(preferredIndex);
+        System.out.println("Achou: "+preferredIndex +" com: ");
+        return this.deviceCommunications.get(preferedOrder);
     }
     
     
