@@ -37,7 +37,9 @@ public class Communication {
     }
     
     public boolean sendActionsToDevice(DeviceCommunication devComm,ArrayList<Action> actions){
-        System.out.println("Ip: "+devComm.getAddress()+" port: " + devComm.getPort() + " num. actions: " +actions.size() );
+        System.out.println("id:"+devComm.getId()+",Communication Type = {id:"+devComm.getCommunicationType().getId()
+                +",name:"+devComm.getCommunicationType().getName()+"},Ip: "
+                +devComm.getAddress()+" port: " + devComm.getPort() );
         switch(devComm.getCommunicationType().getId()){
             case 1:// SOCKET
                 System.out.println("Envio de mensagens por socket não implementada");  
@@ -51,8 +53,10 @@ public class Communication {
             case 4:// GOOGLE CLOUD MESSAGE
                 System.out.println("Envio de mensagens por Google Cloud Message não implementada");
                 Message.Builder build = makeGoogleCloudMessage(actions);
-                GoogleCloudMessageCommunication gcmComm = new GoogleCloudMessageCommunication(devComm.getAddress());
-                gcmComm.send(devComm.getParameters(), build); 
+                GoogleCloudMessageCommunication ms = new GoogleCloudMessageCommunication();
+                ms.sendToBrunoDevice(actions);
+                //GoogleCloudMessageCommunication gcmComm = new GoogleCloudMessageCommunication(devComm.getAddress());
+                //gcmComm.send(devComm.getParameters(), build); 
                 break;
             case 5:// USB
                 System.out.println("Envio de mensagens por USB não implementada");
@@ -71,7 +75,9 @@ public class Communication {
     }
     
     public boolean sendActionsToDevice(DeviceCommunication devComm,String message){
-        System.out.println("Ip: "+devComm.getAddress()+" port: " + devComm.getPort() + " actions: " +message );
+        System.out.println("Communication Type = {id:"+devComm.getCommunicationType().getId()
+                +",name:"+devComm.getCommunicationType().getName()+"},Ip: "
+                +devComm.getAddress()+" port: " + devComm.getPort() + " actions: " +message );
         return true;
     }
     
@@ -93,7 +99,7 @@ public class Communication {
                 }
             }
             json += "}";
-        
+            json = "ON";
             switch (actions.get(i).getFunctionality().getId()) {
                 case 1: // BLUETOOTH_STATE
                     builder.addData("BLUETOOTH_STATE", json);

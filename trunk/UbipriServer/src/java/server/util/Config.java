@@ -9,10 +9,10 @@ package server.util;
  * @author Estudo
  */
 public class Config {
-    public static String dbName     = "localizaPos4";
-    public static String dbServer   = "localhost";
-    public static String dbUser     = "postgres";
-    public static String dbPassword = "postgres";
+    public static String dbName     = "localizaPos";
+    public static String dbServer   = "143.54.12.154";
+    public static String dbUser     = "borges";
+    public static String dbPassword = "centauro666";
     public static boolean debugSQL  = false;
     public static boolean debugLocalCommunication  = false;
     public static boolean debugClassesDAO  = false;
