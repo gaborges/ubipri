@@ -99,7 +99,7 @@ public class Device {
                 preferedOrder = i;
             }
         }
-        System.out.println("Achou: "+preferredIndex +" com: ");
+        //System.out.println("Achou: "+preferredIndex +" com: ");
         return this.deviceCommunications.get(preferedOrder);
     }
     

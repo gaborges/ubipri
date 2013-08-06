@@ -17,6 +17,7 @@ import server.model.AccessType;
 import server.model.Action;
 import server.model.Device;
 import server.model.DeviceCommunication;
+import server.model.DeviceType;
 import server.model.Environment;
 import server.model.EnvironmentType;
 import server.model.Functionality;
@@ -335,16 +336,27 @@ public class PrivacyControlUbiquitous {
         return this.devDAO.hasChangedDeviceEnvironment(deviceCode, environmentId);
     }
 
-    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId) {
+    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId,String deviceName) {
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
-        // verifica se não é para nenhum
+        // Verifica se o dispositivo existe, se sim continua, se não adiciona na DB
+        if(!this.devDAO.isDeviceRegistered(deviceCode)){
+            Device d = new Device();
+            d.setCode(deviceCode);
+            d.setName(deviceName);
+            d.setUser(this.userDAO.getByUserName(userName, false) );
+            d.setDeviceType(new DeviceType(1, "Android")); // Incompleto! fazer método dinâmico
+            this.devDAO.insert(d);
+        }        
+        // Busca o dispositivo
+        Device dev = this.devDAO.get(deviceCode);
+        // insere a o novo código de cuminicação, se não houver comunicação cria uma nova;
         if(this.devDAO.onInsertCommunicationCode(
-                deviceCode,
+                dev,
                 communicationCode,
-                communicationType,      // Google Cloud Message
+                communicationType,    // Google Cloud Message
                 communicationId)){    // O primeiro que encontrar
             return "{\"status\":\"OK\"}";
         } else { return "{\"status\":\"ERROR\"}";}

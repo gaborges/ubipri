@@ -10,7 +10,7 @@ package server.util;
  */
 public class Config {
     public static String dbName     = "localizaPos";
-    public static String dbServer   = "143.54.12.154";
+    public static String dbServer   = "localhost";
     public static String dbUser     = "borges";
     public static String dbPassword = "centauro666";
     public static boolean debugSQL  = false;

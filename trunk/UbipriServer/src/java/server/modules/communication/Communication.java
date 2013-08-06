@@ -53,10 +53,10 @@ public class Communication {
             case 4:// GOOGLE CLOUD MESSAGE
                 System.out.println("Envio de mensagens por Google Cloud Message não implementada");
                 Message.Builder build = makeGoogleCloudMessage(actions);
-                GoogleCloudMessageCommunication ms = new GoogleCloudMessageCommunication();
-                ms.sendToBrunoDevice(actions);
-                //GoogleCloudMessageCommunication gcmComm = new GoogleCloudMessageCommunication(devComm.getAddress());
-                //gcmComm.send(devComm.getParameters(), build); 
+                //GoogleCloudMessageCommunication ms = new GoogleCloudMessageCommunication();
+                //ms.sendToBrunoDevice(actions); // Para testes
+                GoogleCloudMessageCommunication gcmComm = new GoogleCloudMessageCommunication(devComm.getAddress());
+                gcmComm.send(devComm.getParameters(), build); 
                 break;
             case 5:// USB
                 System.out.println("Envio de mensagens por USB não implementada");
@@ -99,7 +99,7 @@ public class Communication {
                 }
             }
             json += "}";
-            json = "ON";
+     
             switch (actions.get(i).getFunctionality().getId()) {
                 case 1: // BLUETOOTH_STATE
                     builder.addData("BLUETOOTH_STATE", json);
@@ -116,8 +116,32 @@ public class Communication {
                 case 5: // WIFI_STATE
                     builder.addData("WIFI_STATE", json);
                         break;
+                case 6: // MOBILE_NETWORK_DATA_ACCESS
+                    builder.addData("MNDA_STATE", json);
+                        break;
+                case 7: // SYSTEM_VOLUME_VALUE
+                    builder.addData("SYSTEM_VOLUME_VALUE", json);
+                        break;
+                case 8: // MEDIA_VOLUME_VALUE
+                    builder.addData("MEDIA_VOLUME_VALUE", json);
+                        break;
                 case 9: // RINGER_VOLUME_VALUE
                     builder.addData("RINGER_VOLUME_VALUE", json);
+                        break;
+                case 10: // SCREEN_TIMEOUT
+                    builder.addData("SCREEN_TIMEOUT", json);
+                        break;
+                case 11: // SCREEN_BRIGHTNESS
+                    builder.addData("SCREEN_BRIGHTNESS", json);
+                        break;
+                case 12: // SMS_STATE
+                    builder.addData("SMS_STATE", json);
+                        break;
+                case 13: // LAUNCH_APP
+                    builder.addData("LAUNCH_APP", json);
+                        break;
+                case 14: // CAMERA_ACCESS
+                    builder.addData("CAMERA_ACCESS", json);
                         break;
                 case 15: // GPS_STATUS
                     builder.addData("GPS_STATUS", json);
@@ -133,7 +157,7 @@ public class Communication {
         return this.ubiPri.validateRemoteLoginUser(userName, userPassword, deviceCode);
     }
 
-    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId) {
+    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId, String deviceName) {
         ubiPri.setCommunication(this);
         return this.ubiPri.onInsertNewCommunicationCode(
                 userName,
@@ -141,7 +165,8 @@ public class Communication {
                 deviceCode,
                 communicationCode,
                 communicationType,      // Google Cloud Message
-                communicationId);    // O primeiro que encontrar
+                communicationId,    // O primeiro que encontrar
+                deviceName);
     }
     
 }

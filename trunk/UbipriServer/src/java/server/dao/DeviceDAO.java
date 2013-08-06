@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import org.json.simple.JSONObject;
 import server.model.CommunicationType;
 import server.model.Device;
 import server.model.DeviceCommunication;
@@ -541,15 +542,15 @@ public class DeviceDAO {
         return false;
     }
     
-    public boolean onInsertCommunicationCode(String deviceCode, String communicationCode, int communicationType, int communicationId) {
-        Device dev = get(deviceCode);
+    public boolean onInsertCommunicationCode(Device dev, String communicationCode, int communicationType, int communicationId) {
+        
         // Verifica se está especificado o id da comunicação
         if(communicationId > 0){
             // se sim atualiza diretamente a comunicação do dispositivo
             // não implementado
             return true;
         }    
-            // se não verifica se o device possui o tipo alvo - GCM
+            // se não, verifica se o device possui o tipo alvo - GCM
         if(communicationType == 4 ) // GOOGLE CLOUD MESSAGE
         {
             // pega o preferido, se não houver preferência pega o primeiro
@@ -567,7 +568,12 @@ public class DeviceDAO {
             }
             // se não possui nenhum, cria uma nova e adiciona como preferido
             // não implementado
-            this.insertNewCommunicationCode(dev,communicationCode);
+            DeviceCommunication devcomm = new DeviceCommunication();
+            devcomm.setAddress("AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY"); // API Google Gloud Message Bruno
+            devcomm.setParameters(communicationCode);
+            devcomm.setName("GCM "+dev.getName());
+            devcomm.setCommunicationType(new CommunicationType(communicationType, "GCM"));
+            this.insertNewCommunicationCode(dev,devcomm);
         } else {
             System.out.println("Não implementado");
             return false;
@@ -591,8 +597,23 @@ public class DeviceDAO {
         this.db.desconectar();
     }
 
-    private void insertNewCommunicationCode(Device dev, String communicationCode) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    private void insertNewCommunicationCode(Device device, DeviceCommunication devcomm) {
+        String sql =
+                "INSERT INTO device_communication (devcom_name,devcom_address,devcom_parameters,communication_type_id,device_id) VALUES (?,?,?,?,?) ;";
+        this.db.conectar();
+        try {
+            pstmt = getConnection().prepareStatement(sql);
+            pstmt.setString(1, devcomm.getName());
+            pstmt.setString(2, devcomm.getAddress());
+            pstmt.setString(3, devcomm.getParameters());
+            pstmt.setInt(4, devcomm.getCommunicationType().getId());
+            pstmt.setInt(5, device.getId());
+            pstmt.execute();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
+        }
+        this.db.desconectar();
     }
 
 }

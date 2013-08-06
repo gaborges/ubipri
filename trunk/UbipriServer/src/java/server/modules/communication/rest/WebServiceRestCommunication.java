@@ -50,8 +50,9 @@ public class WebServiceRestCommunication {
     /**
      * 1) Cadastro do código de comunicação por Google Cloud Message.
      * Path: http://host:port/UbipriServer/webresources/rest/insert/communicationCode/gcm
-     * @param String userName, String userPassword, String deviceCode, newCommunicationCode:String .
-     * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
+     * @param String userName, String userPassword, String deviceCode, newCommunicationCode:String, [deviceName: String].
+     * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321",
+     * "deviceName":"Smartphone do Bruno"}
      * @return Status of the operation in the Server.
      * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENY"}
      */
@@ -68,14 +69,16 @@ public class WebServiceRestCommunication {
                 p.getDeviceCode(),
                 p.getCommunicationCode(),
                 4,      // Google Cloud Message
-                -1);    // O primeiro que encontrar
+                -1,    // O primeiro que encontrar
+                p.getDeviceName());
     }
     
     /**
      * 2) Cadastro do código de comunicação para Comunicações Genéricas. (Não implementado)
      * Path: http://host:port/UbipriServer/webresources/rest/insert/communicationCode/generic
-     * @param String userName, String userPassword, String deviceCode, newCommunicationCode:String, communicationType:int, communicationId :int.
-     * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321"}
+     * @param String userName, String userPassword, String deviceCode, newCommunicationCode:String, communicationType:int, communicationId :int, [deviceName: String].
+     * Message Format: {"userName":"user_name", "userPassword":"12345", "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321",
+     *  "deviceName":"Smartphone do Bruno"}
      * @return Status of the operation in the Server.
      * Return Message Format: {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
@@ -140,7 +143,7 @@ public class WebServiceRestCommunication {
     }
     
     /**
-     * 6) Buscar Ambientes
+     * 6) Buscar Ambientes em XML
      * Path: http://host:port/UbipriServer/webresources/rest/get/environment/map
      * Consumes: application/json
      * Produces: application/xml
@@ -152,7 +155,31 @@ public class WebServiceRestCommunication {
      */
     
     /**
-     * 7) Envio de atualização de localização, por provedor de localização, sem resposta de ações (GUILHERME)
+     * 7) Buscar Ambientes em JSON
+     * Path: http://host:port/UbipriServer/webresources/rest/get/environment/map
+     * Consumes: application/json
+     * Produces: application/xml
+     * Method: GET
+     * @param Params: userName : String, userPassword : String, deviceCode : String, [latitude : double], [longitude : double],[simbolicBaseEnvironment : String].
+     * Message Format: Message format: { "userName":"bruno", "userPassword":"12345", "deviceCode":"4444444444"", "latitude ":"-30.00002313", "longitude ":"-51.76672364","simbolicBaseEnvironment ":"Porto Alegre"}
+     * @return Mapped environments with XML.
+     * Return Message Format: <>xml com elementos - pegar do eclipse</>
+     */
+    
+    /**
+     * 8) Buscar Ambientes em XML
+     * Path: http://host:port/UbipriServer/webresources/rest/get/environment/map
+     * Consumes: application/json
+     * Produces: application/xml
+     * Method: GET
+     * @param Params: userName : String, userPassword : String, deviceCode : String, [latitude : double], [longitude : double],[simbolicBaseEnvironment : String].
+     * Message Format: Message format: { "userName":"bruno", "userPassword":"12345", "deviceCode":"4444444444"", "latitude ":"-30.00002313", "longitude ":"-51.76672364","simbolicBaseEnvironment ":"Porto Alegre"}
+     * @return Mapped environments with XML.
+     * Return Message Format: <>xml com elementos - pegar do eclipse</>
+     */
+    
+    /**
+     * 9) Envio de atualização de localização, por provedor de localização, sem resposta de ações (GUILHERME)
      * Descrição: Método utilizado para atualizar a localização de um dispositivo e de um usuário através de um provedor, RFID com arduino pode ser um exemplo.
      * Path: http://host:port/UbipriServer/webresources/rest/change/location/json/provider
      * @param environmentId : int , userName : String, userPassword : String, deviceCode : String, providerCode : String.

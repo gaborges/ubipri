@@ -19,6 +19,8 @@ public class InsertCommunicationCodeParameters implements Serializable{
     private String communicationCode;
     private int communicationType;
     private int communicationId;
+    private String deviceName;
+    private int[] functionalities;
 
     public String getUserName() {
         return userName;
@@ -67,5 +69,21 @@ public class InsertCommunicationCodeParameters implements Serializable{
     public void setCommunicationId(int communicationId) {
         this.communicationId = communicationId;
     }
-        
+
+    public String getDeviceName() {
+        return deviceName;
+    }
+
+    public void setDeviceName(String deviceName) {
+        this.deviceName = deviceName;
+    }
+
+    public int[] getFunctionalities() {
+        return functionalities;
+    }
+
+    public void setFunctionalities(int[] functionalities) {
+        this.functionalities = functionalities;
+    }
+
 }
