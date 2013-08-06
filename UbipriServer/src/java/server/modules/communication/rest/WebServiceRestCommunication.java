@@ -63,6 +63,7 @@ public class WebServiceRestCommunication {
     @Produces("application/json") 
     public String insertGoogleCloudMessageCommunicationCode(InsertCommunicationCodeParameters p) {
         Communication comm = new Communication(new PrivacyControlUbiquitous());
+        //System.out.println(p.toString());
         return comm.onInsertNewCommunicationCode(
                 p.getUserName(),
                 p.getUserPassword(), 
@@ -70,7 +71,8 @@ public class WebServiceRestCommunication {
                 p.getCommunicationCode(),
                 4,      // Google Cloud Message
                 -1,    // O primeiro que encontrar
-                p.getDeviceName());
+                p.getDeviceName(),
+                p.getFunctionalities());
     }
     
     /**

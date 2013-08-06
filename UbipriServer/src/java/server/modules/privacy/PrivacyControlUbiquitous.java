@@ -336,25 +336,34 @@ public class PrivacyControlUbiquitous {
         return this.devDAO.hasChangedDeviceEnvironment(deviceCode, environmentId);
     }
 
-    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId,String deviceName) {
+    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId,String deviceName,int[] functionalities) {
+        Device device = null;
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
         // Verifica se o dispositivo existe, se sim continua, se não adiciona na DB
         if(!this.devDAO.isDeviceRegistered(deviceCode)){
-            Device d = new Device();
-            d.setCode(deviceCode);
-            d.setName(deviceName);
-            d.setUser(this.userDAO.getByUserName(userName, false) );
-            d.setDeviceType(new DeviceType(1, "Android")); // Incompleto! fazer método dinâmico
-            this.devDAO.insert(d);
-        }        
-        // Busca o dispositivo
-        Device dev = this.devDAO.get(deviceCode);
+            device = new Device();
+            device.setCode(deviceCode);
+            device.setName((deviceName != null)?deviceName:("the device of "+userName));
+            device.setUser(this.userDAO.getByUserName(userName, false) );
+            device.setDeviceType(new DeviceType(1, "Android")); // Incompleto! fazer método dinâmico
+            this.devDAO.insert(device);
+             // Busca o dispositivo
+            device = this.devDAO.get(deviceCode);
+            // Insere as funcionalidades do dispositivo, caso possua
+            if(functionalities != null)
+                if(functionalities.length > 0)
+                    this.devDAO.insertDeviceFunctionalities(functionalities, device);            
+        }  else {
+             // Busca o dispositivo
+            device = this.devDAO.get(deviceCode);
+        }       
+       
         // insere a o novo código de cuminicação, se não houver comunicação cria uma nova;
         if(this.devDAO.onInsertCommunicationCode(
-                dev,
+                device,
                 communicationCode,
                 communicationType,    // Google Cloud Message
                 communicationId)){    // O primeiro que encontrar

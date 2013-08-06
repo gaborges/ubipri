@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import org.json.simple.JSONObject;
 import server.model.CommunicationType;
 import server.model.Device;
 import server.model.DeviceCommunication;
@@ -553,21 +552,23 @@ public class DeviceDAO {
             // se não, verifica se o device possui o tipo alvo - GCM
         if(communicationType == 4 ) // GOOGLE CLOUD MESSAGE
         {
-            // pega o preferido, se não houver preferência pega o primeiro
-            if(dev.getPreferredDeviceCommunication().getCommunicationType().getId() == 4){
-                this.updateCommunicationCode(dev.getPreferredDeviceCommunication(),communicationCode);
-                return true;
-            } else {
-                for(DeviceCommunication c : dev.getDeviceCommunications()){
-                    if(c.getCommunicationType().getId() == 4){
-                        // atualiza no banco
-                        this.updateCommunicationCode(c,communicationCode);
-                        return true;
+            // verifica se possui alguma comunicação
+            if(dev.getDeviceCommunications().size() > 0){
+                // pega o preferido, se não houver preferência pega o primeiro
+                if(dev.getPreferredDeviceCommunication().getCommunicationType().getId() == 4){
+                    this.updateCommunicationCode(dev.getPreferredDeviceCommunication(),communicationCode);
+                    return true;
+                } else {
+                    for(DeviceCommunication c : dev.getDeviceCommunications()){
+                        if(c.getCommunicationType().getId() == 4){
+                            // atualiza no banco
+                            this.updateCommunicationCode(c,communicationCode);
+                            return true;
+                        }
                     }
                 }
             }
             // se não possui nenhum, cria uma nova e adiciona como preferido
-            // não implementado
             DeviceCommunication devcomm = new DeviceCommunication();
             devcomm.setAddress("AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY"); // API Google Gloud Message Bruno
             devcomm.setParameters(communicationCode);
@@ -616,4 +617,30 @@ public class DeviceDAO {
         this.db.desconectar();
     }
 
+    
+     /**
+     * insere no dispositivo as funcionalidades oriundas de um array que possui o ID delas.
+     *
+     * @param
+     * @return
+     */
+    public void insertDeviceFunctionalities(int[] functionalities, Device device) {
+        String sql =
+                " INSERT INTO device_functionality (device_id,functionality_id) VALUES  ";
+        for(int i = 0;i< functionalities.length;i++){
+            sql += "("+device.getId()+","+functionalities[i]+")";
+            if(i < functionalities.length-1) sql += ",";
+        }
+        sql += ";";
+        this.db.conectar();
+        try {
+            pstmt = getConnection().prepareStatement(sql);
+            pstmt.execute();
+            pstmt.close();
+        } catch (SQLException e) {
+            System.out.println("Class: " + this.toString()+". Exception: "+e);
+        }
+        this.db.desconectar();
+    }
+    
 }

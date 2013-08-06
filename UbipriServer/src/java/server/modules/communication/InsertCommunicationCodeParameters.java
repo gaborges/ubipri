@@ -86,4 +86,12 @@ public class InsertCommunicationCodeParameters implements Serializable{
         this.functionalities = functionalities;
     }
 
+    @Override
+    public String toString() {
+        String f = "[";
+        if(functionalities != null)  for(int i = 0; i < functionalities.length;i++) {f+= functionalities[i]; if(functionalities.length-1 > i) f+= ",";}
+        f += "]";
+        return "InsertCommunicationCodeParameters{" + "userName=" + userName + ", userPassword=" + userPassword + ", deviceCode=" + deviceCode + ", communicationCode=" + communicationCode + ", communicationType=" + communicationType + ", communicationId=" + communicationId + ", deviceName=" + deviceName + ", num functionalities=" +((functionalities == null)? -1 : functionalities.length ) + " - "+f+'}';
+    }
+
 }
