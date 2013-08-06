@@ -157,7 +157,7 @@ public class Communication {
         return this.ubiPri.validateRemoteLoginUser(userName, userPassword, deviceCode);
     }
 
-    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId, String deviceName) {
+    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId, String deviceName, int[] functionalities) {
         ubiPri.setCommunication(this);
         return this.ubiPri.onInsertNewCommunicationCode(
                 userName,
@@ -166,7 +166,7 @@ public class Communication {
                 communicationCode,
                 communicationType,      // Google Cloud Message
                 communicationId,    // O primeiro que encontrar
-                deviceName);
+                deviceName,functionalities);
     }
     
 }
