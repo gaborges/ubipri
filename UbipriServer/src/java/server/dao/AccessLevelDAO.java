@@ -8,18 +8,11 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
-import java.util.Date;
 import server.model.AccessLevel;
 import server.model.AccessType;
-import server.model.Action;
-import server.model.Environment;
 import server.model.EnvironmentType;
-import server.model.Functionality;
-import server.model.LocalizationType;
 import server.util.AccessBD;
-import server.util.Config;
 import server.util.SingleConnection;
 
 /**
@@ -69,7 +62,7 @@ public class AccessLevelDAO {
         String sql =
                 " INSERT INTO access_level (acclev_impact_factor,environment_type_id,access_type_id) "
                 + " VALUES (?,?,?); ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setDouble(1, o.getImpactFactor());
@@ -79,7 +72,7 @@ public class AccessLevelDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -93,7 +86,7 @@ public class AccessLevelDAO {
     public void delete(AccessLevel o) {
         String sql =
                 " DELETE FROM access_level WHERE acclev_id = ? ; ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, o.getId());
@@ -102,7 +95,7 @@ public class AccessLevelDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -117,7 +110,7 @@ public class AccessLevelDAO {
         String sql =
                 " UPDATE access_level SET acclev_impact_factor = ?, environment_type_id = ?,access_type_id = ? "
                 + " WHERE access_id = ? ;";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setDouble(1, o.getImpactFactor());
@@ -129,7 +122,7 @@ public class AccessLevelDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -150,7 +143,7 @@ public class AccessLevelDAO {
                 + " FROM access_level, access_type, environment_type "
                 + " WHERE environment_type_id = envtyp_id AND access_type_id = acctyp_id AND acclev_id = ?;";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, accessLevelId);
@@ -173,7 +166,7 @@ public class AccessLevelDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return temp;
     }
     
@@ -185,7 +178,7 @@ public class AccessLevelDAO {
                 + " FROM access_level "
                 + " WHERE environment_type_id = ?  AND access_type_id = ? ;";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, environmentType.getId());
@@ -209,7 +202,7 @@ public class AccessLevelDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return temp;
     }
 
@@ -249,7 +242,7 @@ public class AccessLevelDAO {
         AccessLevel temp = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql =
@@ -287,7 +280,7 @@ public class AccessLevelDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return list;
     }
 

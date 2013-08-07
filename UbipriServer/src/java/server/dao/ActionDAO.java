@@ -71,7 +71,7 @@ public class ActionDAO {
                 " INSERT INTO actions (accessLevel_id,functionality_id,custom_environment_id,act_action, "
                 + " act_start_date,act_end_date,act_start_daily_interval,act_interval_duration) "
                 + " VALUES (?,?,?,?,?,?,?,?); ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, o.getAccessLevel().getId());
@@ -86,7 +86,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println(e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -100,7 +100,7 @@ public class ActionDAO {
     public void delete(Action o) {
         String sql =
                 " DELETE FROM actions WHERE act_id = ? ; ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, o.getId());
@@ -109,7 +109,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -125,7 +125,7 @@ public class ActionDAO {
                 " UPDATE actions SET act_action = ? , act_start_date = ?, act_end_date = ? ,  "
                 + " act_start_daily_interval = ? , act_interval_duration = ? , custom_environment_id = ? "
                 + " WHERE act_id = ? ;";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getAction());
@@ -140,7 +140,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -162,7 +162,7 @@ public class ActionDAO {
                 + " FROM access_level, access_type, environment_type "
                 + " WHERE environment_type_id = envtyp_id AND access_type_id = acctyp_id AND acclev_id = ?;";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, actionId);
@@ -195,7 +195,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return temp;
     }
 
@@ -236,7 +236,7 @@ public class ActionDAO {
         Environment env = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql =
@@ -288,7 +288,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return list;
     }
 
@@ -298,7 +298,7 @@ public class ActionDAO {
         Environment env = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             sql = " SELECT act_id,act_action,acclev_impact_factor,act_start_date,act_end_date,act_start_daily_interval,"
                     + " act_interval_duration, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
@@ -338,7 +338,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+       // this.db.disconnect();
         return list;
     }
     
@@ -352,7 +352,7 @@ public class ActionDAO {
         Environment env = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             sql = " SELECT act_id,act_action,acclev_impact_factor,act_start_date,act_end_date,act_start_daily_interval,"
                     + " act_interval_duration, fun_name, fun_id, access_level_id, custom_environment_id, acclev_impact_factor "
@@ -391,7 +391,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Erro Custom action: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return list;
     }
 
@@ -400,7 +400,7 @@ public class ActionDAO {
         Action temp = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             sql = " SELECT act_id,act_action,act_start_date,act_end_date,act_start_daily_interval, "
                     + " act_interval_duration, fun_name, fun_id, custom_environment_id "
@@ -433,7 +433,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         accessLevel.setActionsList(list);
         return list;
     }
@@ -446,7 +446,7 @@ public class ActionDAO {
                 + " FROM actions_args "
                 + " WHERE action_id = ?;";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             PreparedStatement pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, action.getId());
@@ -463,7 +463,7 @@ public class ActionDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return list;
     }
 }

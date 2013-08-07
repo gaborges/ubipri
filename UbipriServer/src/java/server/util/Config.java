@@ -11,8 +11,8 @@ package server.util;
 public class Config {
     public static String dbName     = "localizaPos";
     public static String dbServer   = "localhost";
-    public static String dbUser     = "borges";
-    public static String dbPassword = "centauro666";
+    public static String dbUser     = "postgres";
+    public static String dbPassword = "postgres";
     public static boolean debugSQL  = false;
     public static boolean debugLocalCommunication  = false;
     public static boolean debugClassesDAO  = false;
