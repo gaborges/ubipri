@@ -12,10 +12,8 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import server.model.Environment;
 import server.model.EnvironmentType;
-import server.model.IdentificationCode;
 import server.model.LocalizationType;
 import server.model.LogEvent;
-import server.model.User;
 import server.util.AccessBD;
 import server.util.Config;
 import server.util.SingleConnection;
@@ -66,7 +64,7 @@ public class EnvironmentDAO {
         String sql =
                 " INSERT INTO environment (env_name,env_latitude,env_longitude,parent_environment_id,"
                     + "localization_type_id,environment_type_id) VALUES (?,?,?,?,?,?,?) ;";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getName());
@@ -80,7 +78,7 @@ public class EnvironmentDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -94,7 +92,7 @@ public class EnvironmentDAO {
     public void delete(Environment o) {
         String sql =
                 " DELETE FROM environment WHERE env_id = ? ; ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, o.getId());
@@ -103,7 +101,7 @@ public class EnvironmentDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -119,7 +117,7 @@ public class EnvironmentDAO {
                 " UPDATE environment SET env_name = ?, env_latitude = ?, enc_longitude = ?, "
                 + " parent_environment_id = ?, localization_type_id = ?, environment_type_id = ? " +
                 " WHERE env_id = ? ;";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getName());
@@ -134,7 +132,7 @@ public class EnvironmentDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -168,7 +166,7 @@ public class EnvironmentDAO {
                     " FROM environment, localization_type,environment_type " +
                     " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id AND env_id = ? ;";
         }
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, id);
@@ -192,7 +190,7 @@ public class EnvironmentDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return environment;
     }
     
@@ -235,7 +233,7 @@ public class EnvironmentDAO {
         Environment temp = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql = " SELECT env_id, env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id," +
@@ -276,7 +274,7 @@ public class EnvironmentDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return list;
     }
     
@@ -292,7 +290,7 @@ public class EnvironmentDAO {
                 " VALUES (?,?,?,?,?,?); ";
         if(Config.debugSQL) System.out.println(" INSERT LOG: "+o.getTime().toString()+","+o.getUser().getId()+","
                 +o.getEnvironment().getId()+","+o.getCurrentData()+","+ o.getDevice().getId()+","+o.getEvent());
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setTimestamp(1, new Timestamp(o.getTime().getTime()));
@@ -307,6 +305,6 @@ public class EnvironmentDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 }

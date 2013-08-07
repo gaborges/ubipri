@@ -10,8 +10,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import server.model.EnvironmentType;
-import server.model.Functionality;
-import server.model.User;
 import server.util.AccessBD;
 import server.util.Config;
 
@@ -64,7 +62,7 @@ public class EnvironmentTypeDAO {
     public void insert(EnvironmentType o) {
         String sql =
                 " INSERT INTO environment_type (envtyp_name)  VALUES (?); ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getName());
@@ -73,7 +71,7 @@ public class EnvironmentTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -87,7 +85,7 @@ public class EnvironmentTypeDAO {
     public void delete(EnvironmentType o) {
         String sql =
                 " DELETE FROM environment_type WHERE envtyp_id = ? ; ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, o.getId());
@@ -96,7 +94,7 @@ public class EnvironmentTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -110,7 +108,7 @@ public class EnvironmentTypeDAO {
     public void update(EnvironmentType o) {
         String sql =
                 " UPDATE environment_type SET envtyp_name = ? WHERE envtyp_id = ? ;";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getName());
@@ -120,7 +118,7 @@ public class EnvironmentTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -152,7 +150,7 @@ public class EnvironmentTypeDAO {
                     " FROM environment_type " +
                     " WHERE envtyp_id = ? ;";
         }
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, id);
@@ -167,7 +165,7 @@ public class EnvironmentTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return temp;
     }
 
@@ -204,7 +202,7 @@ public class EnvironmentTypeDAO {
         ArrayList<EnvironmentType> list = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql = " SELECT envtyp_id, envtyp_name " +
@@ -230,7 +228,7 @@ public class EnvironmentTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return list;
     }
 }

@@ -23,8 +23,16 @@ public class SingleConnection {
                         Config.dbName, // Nome do Banco de dados
                         Config.dbUser, // Usuário
                         Config.dbPassword); // Senha
-            accessDB.conectar();
+            accessDB.connect();
         }
         return accessDB;
+    }
+    
+    public static boolean closeAccessDB(){
+        if(accessDB != null){
+            accessDB.connect();
+            accessDB = null;
+        }
+        return true;
     }
 }

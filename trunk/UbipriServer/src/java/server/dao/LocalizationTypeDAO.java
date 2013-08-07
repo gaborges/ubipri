@@ -9,9 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import server.model.Functionality;
 import server.model.LocalizationType;
-import server.model.User;
 import server.util.AccessBD;
 import server.util.Config;
 
@@ -64,7 +62,7 @@ public class LocalizationTypeDAO {
     public void insert(LocalizationType o) {
         String sql =
                 " INSERT INTO localization_type (loctyp_name,loctyp_precision,loctyp_metric) VALUES (?,?,?); ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getName());
@@ -75,7 +73,7 @@ public class LocalizationTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -89,7 +87,7 @@ public class LocalizationTypeDAO {
     public void delete(LocalizationType o) {
         String sql =
                 " DELETE FROM localization_type WHERE loctyp_id = ? ; ";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, o.getId());
@@ -98,7 +96,7 @@ public class LocalizationTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -112,7 +110,7 @@ public class LocalizationTypeDAO {
     public void update(LocalizationType o) {
         String sql =
                 " UPDATE localization_type SET loctyp_name = ? , loctyp_precision = ? , loctyp_metric = ? WHERE loctyp_id = ? ;";
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getName());
@@ -124,7 +122,7 @@ public class LocalizationTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
     }
 
     /**
@@ -156,7 +154,7 @@ public class LocalizationTypeDAO {
                     " FROM localization_type " +
                     " WHERE loctyp_id = ? ;";
         }
-        this.db.conectar();
+        //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, id);
@@ -171,7 +169,7 @@ public class LocalizationTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return temp;
     }
 
@@ -208,7 +206,7 @@ public class LocalizationTypeDAO {
         ArrayList<LocalizationType> list = null;
         String sql = "";
 
-        this.db.conectar();
+        //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql = " SELECT loctyp_id,loctyp_name,loctyp_precision,loctyp_metric " +
@@ -234,7 +232,7 @@ public class LocalizationTypeDAO {
         } catch (SQLException e) {
             System.out.println("Class: " + this.toString()+". Exception: "+e);
         }
-        this.db.desconectar();
+        //this.db.disconnect();
         return list;
     }
 }
