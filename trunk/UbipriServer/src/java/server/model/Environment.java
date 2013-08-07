@@ -15,10 +15,14 @@ public class Environment {
     private String name;
     private Double longitude;
     private Double latitude;
+    private Double altitude;
+    private Integer version;
+    private Double operatingRange;
     private LocalizationType localizationType;
     private EnvironmentType environmentType;
     private Environment parentEnvironment;
     private ArrayList<Action> environmentcustomActions;
+    private ArrayList<Point> environmentPoints; // Pontos mapeados do ambiente
 
     public Environment() {
     }
@@ -87,4 +91,35 @@ public class Environment {
         this.environmentcustomActions = environmentcustomActions;
     }
 
+    public ArrayList<Point> getEnvironmentPoints() {
+        return environmentPoints;
+    }
+
+    public void setEnvironmentPoints(ArrayList<Point> environmentPoints) {
+        this.environmentPoints = environmentPoints;
+    }
+
+    public Double getAltitude() {
+        return altitude;
+    }
+
+    public void setAltitude(Double altitude) {
+        this.altitude = altitude;
+    }
+
+    public Integer getVersion() {
+        return version;
+    }
+
+    public void setVersion(Integer version) {
+        this.version = version;
+    }
+
+    public Double getOperatingRange() {
+        return operatingRange;
+    }
+
+    public void setOperatingRange(Double operatingRange) {
+        this.operatingRange = operatingRange;
+    }
 }

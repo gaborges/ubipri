@@ -7,6 +7,8 @@ package server.modules.privacy;
 import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
 import server.dao.AccessLevelDAO;
 import server.dao.ActionDAO;
 import server.dao.DeviceDAO;
@@ -22,6 +24,7 @@ import server.model.Environment;
 import server.model.EnvironmentType;
 import server.model.Functionality;
 import server.model.LogEvent;
+import server.model.Point;
 import server.model.User;
 import server.model.UserEnvironment;
 import server.modules.communication.Communication;
@@ -370,4 +373,61 @@ public class PrivacyControlUbiquitous {
             return "{\"status\":\"OK\"}";
         } else { return "{\"status\":\"ERROR\"}";}
     }
+    
+    public String getJsonEnvironments(String userName,String userPassword, String deviceCode,int version){
+        // Verifica se o usuário possui permissão
+        if (!this.userHasAccessPermission(userName, userPassword)) {
+            return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
+        }
+        
+        // Verifica se o dispositivo existe, se sim continua
+        if(!this.devDAO.isDeviceRegistered(deviceCode)){
+            return "{\"status\":\"DENY\"}";
+        }
+        // Retorna a última versão atualizada no banco de dados
+        int lastVersion = this.envDAO.getLastUpdatedVersion();
+        // Compara se a versão passada é a última, se sim retorna mensagem OK
+        if(version >= lastVersion){
+            return "{\"status\":\"OK\",\"version\":\""+lastVersion+"\"}";
+        }
+        // Busca ambientes iniciando pela atualização
+        ArrayList<Environment> list = this.envDAO.getListByVersion(version);
+        // Gera o JSON    
+        // retorna o JSON
+        return this.makeJsonEnviromentMap(list,lastVersion);
+    }
+    
+    public String makeJsonEnviromentMap(ArrayList<Environment> list,int version){
+        
+        JSONObject root = new JSONObject(), environmentJSON, point;
+        JSONArray environments = new JSONArray(), pointsArrayJSON;
+        root.put("status", "UPDATED");
+        root.put("version", version);
+        
+        for(Environment e : list){
+            environmentJSON = new JSONObject();
+            environmentJSON.put("id", e.getId());
+            environmentJSON.put("version", e.getVersion());
+            environmentJSON.put("name", e.getName());
+            environmentJSON.put("latitude", e.getLatitude());
+            environmentJSON.put("longitude", e.getLongitude());
+            environmentJSON.put("altitude", e.getAltitude());
+            environmentJSON.put("parentEnvironment", (e.getParentEnvironment() != null)?e.getParentEnvironment().getId():0);
+            environmentJSON.put("operatingRange", e.getOperatingRange());
+            pointsArrayJSON = new JSONArray();
+            for(Point p : e.getEnvironmentPoints()){
+                point = new JSONObject();
+                point.put("latitude", p.getLatitude());
+                point.put("longitude", p.getLongitude());
+                point.put("altitude", p.getAltitude());
+                pointsArrayJSON.add(point);
+            }
+            environmentJSON.put("map", pointsArrayJSON);
+            environments.add(environmentJSON);
+        }
+        
+        root.put("environments",environments);
+        return root.toJSONString();
+    }
+    
 }
