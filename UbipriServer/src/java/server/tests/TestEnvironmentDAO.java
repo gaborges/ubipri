@@ -11,6 +11,7 @@ import server.dao.UserDAO;
 import server.model.Environment;
 
 import server.model.User;
+import server.modules.privacy.PrivacyControlUbiquitous;
 
 /**
  *
@@ -27,6 +28,13 @@ public class TestEnvironmentDAO {
         //testGet(); //- OK
         //testGetAll(); //- OK
         //testGetListWithPagination(); // -- ok
+        //testJsonMap(); - OK
+    }
+    
+    public static void testJsonMap(){
+        PrivacyControlUbiquitous p = new PrivacyControlUbiquitous();
+        String res = p.getJsonEnvironments("borges", "12345","1111111111", -0);
+        System.out.println("RESP: "+res);
     }
 
     public static void testInsert() {

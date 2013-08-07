@@ -17,6 +17,11 @@ import server.modules.privacy.PrivacyControlUbiquitous;
  */
 public class Communication {
     
+    public static final String OK = "1";
+    public static final String ERROR = "2";
+    public static final String UPDATED = "3";
+    public static final String DENNY = "4";
+    
     private PrivacyControlUbiquitous ubiPri;
 
     public Communication() {        
@@ -167,6 +172,11 @@ public class Communication {
                 communicationType,      // Google Cloud Message
                 communicationId,    // O primeiro que encontrar
                 deviceName,functionalities);
+    }
+    
+    public String getEnvironmentJSONMap(String userName,String userPassword, String deviceCode,int version){
+        ubiPri.setCommunication(this);
+        return this.ubiPri.getJsonEnvironments(userName, userPassword, deviceCode, version);
     }
     
 }
