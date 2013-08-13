@@ -330,7 +330,7 @@ public class ActionDAO {
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
                 temp.setDurationInterval(rs.getInt("act_interval_duration"));
                 temp.setId(rs.getInt("act_id"));
-
+                temp.setArgs(getActionArgs(temp));
                 list.add(temp);
             }
             rs.close();
@@ -383,7 +383,7 @@ public class ActionDAO {
                 temp.setStartDailyInterval(rs.getInt("act_start_daily_interval"));
                 temp.setDurationInterval(rs.getInt("act_interval_duration"));
                 temp.setId(rs.getInt("act_id"));
-
+                temp.setArgs(getActionArgs(temp));
                 list.add(temp);
             }
             rs.close();
