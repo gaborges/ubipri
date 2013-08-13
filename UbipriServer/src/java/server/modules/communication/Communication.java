@@ -90,11 +90,20 @@ public class Communication {
         String json ;
         Message.Builder builder = new Message.Builder();
         for (int i = 0; i < actions.size();i++) {
-            json = "{\"state\":\""+ actions.get(i).getAction() +"\"";
+            json = "{\"state\":\"";
+            if (actions.get(i).getFunctionality().getId()!=9)
+                json += actions.get(i).getAction() +"\"";
+            else{
+                if(!actions.get(i).getArgs().get(0).getValue().isEmpty()) {
+                         json += "\"" + actions.get(i).getArgs().get(0).getValue() + "\"";
+                } else {
+                    json += "50\"";
+                }
+            }
             if(actions.get(i).getDuration() > 0)
                 json += ",\"duration\":\"" + String.valueOf(actions.get(i).getDuration()) + "\"";
             if(actions.get(i).getArgs().size() > 0){
-                json += ",\"args\":[";
+                //json += ",\"args\":[";
                 for(int j = 0; j < actions.get(i).getArgs().size();j++){
                      if(!actions.get(i).getArgs().get(j).getLabel().isEmpty()) {
                          json += "\"" + actions.get(i).getArgs().get(j).getLabel() + "\":";
@@ -102,6 +111,7 @@ public class Communication {
                      json += "\"" + actions.get(i).getArgs().get(j).getValue() + "\"";
                      if(j != (actions.get(i).getArgs().size()-1)) json += ",";
                 }
+                //json += "]";
             }
             json += "}";
      
