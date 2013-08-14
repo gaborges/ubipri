@@ -110,7 +110,11 @@ public class WebServiceRestCommunication {
     public String onChangeCurrentUserLocalization(Parameters p) {
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         return comm.onChangeCurrentUserLocalization(
-                p.getEnvironmentId(), p.getUserName(), p.getUserPassword(), p.getDeviceCode());
+                p.getEnvironmentId(), p.getUserName(), p.getUserPassword(), p.getDeviceCode(),
+                    // Por padrão exiting é false, se vier nulo quer dizer que não foi passado por parâmetro
+                (p.getExiting() == null)? false : 
+                    // se retornar true será true senão qualquer outra forma será false
+                ((p.getExiting().equals("true"))? true : false));
     }
 
     /**
@@ -134,7 +138,11 @@ public class WebServiceRestCommunication {
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         //System.out.println("{"+p.getDeviceCode()+","+p.getUserName()+","+p.getEnvironmentId()+"}");
         return comm.onChangeCurrentUserLocalizationWithResponse(
-                p.getEnvironmentId(), p.getUserName(), p.getUserPassword(), p.getDeviceCode());
+                p.getEnvironmentId(), p.getUserName(), p.getUserPassword(), p.getDeviceCode(),
+                    // Por padrão exiting é false, se vier nulo quer dizer que não foi passado por parâmetro
+                (p.getExiting() == null)? false : 
+                    // se retornar true será true senão qualquer outra forma será false
+                ((p.getExiting().equals("true"))? true : false));
     }
 
     /**

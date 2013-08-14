@@ -8,6 +8,7 @@ import com.google.android.gcm.server.Message;
 import java.util.ArrayList;
 import server.model.Action;
 import server.model.DeviceCommunication;
+import server.model.Environment;
 import server.modules.communication.cloudmessage.GoogleCloudMessageCommunication;
 import server.modules.privacy.PrivacyControlUbiquitous;
 
@@ -31,17 +32,17 @@ public class Communication {
         this.ubiPri = ubiPri;
     }
     
-    public String onChangeCurrentUserLocalization(int environmentId, String userName,String userPassword,String deviceCode){
+    public String onChangeCurrentUserLocalization(int environmentId, String userName,String userPassword,String deviceCode,Boolean exiting){
         ubiPri.setCommunication(this);
-        return ubiPri.onChangeCurrentUserLocalizationWithReturnAsynchronousActions(environmentId, userName,userPassword,deviceCode);
+        return ubiPri.onChangeCurrentUserLocalizationWithReturnAsynchronousActions(environmentId, userName,userPassword,deviceCode,exiting);
     }
     
-    public String onChangeCurrentUserLocalizationWithResponse(int environmentId, String userName,String userPassword,String deviceCode){
+    public String onChangeCurrentUserLocalizationWithResponse(int environmentId, String userName,String userPassword,String deviceCode,Boolean exiting){
         ubiPri.setCommunication(this);
-        return ubiPri.onChangeCurrentUserLocalizationReturnActions(environmentId, userName,userPassword,deviceCode);
+        return ubiPri.onChangeCurrentUserLocalizationReturnActions(environmentId, userName,userPassword,deviceCode,exiting);
     }
     
-    public boolean sendActionsToDevice(DeviceCommunication devComm,ArrayList<Action> actions){
+    public boolean sendActionsToDevice(DeviceCommunication devComm,ArrayList<Action> actions, Environment environment, Boolean exitingEnvironment){
         System.out.println("id:"+devComm.getId()+",Communication Type = {id:"+devComm.getCommunicationType().getId()
                 +",name:"+devComm.getCommunicationType().getName()+"},Ip: "
                 +devComm.getAddress()+" port: " + devComm.getPort() );
@@ -57,7 +58,7 @@ public class Communication {
                 break;
             case 4:// GOOGLE CLOUD MESSAGE
                 System.out.println("Envio de mensagens por Google Cloud Message não implementada");
-                Message.Builder build = makeGoogleCloudMessage(actions);
+                Message.Builder build = makeGoogleCloudMessage(actions,environment, exitingEnvironment);
                 //GoogleCloudMessageCommunication ms = new GoogleCloudMessageCommunication();
                 //ms.sendToBrunoDevice(actions); // Para testes
                 GoogleCloudMessageCommunication gcmComm = new GoogleCloudMessageCommunication(devComm.getAddress());
@@ -86,9 +87,12 @@ public class Communication {
         return true;
     }
     
-    private Message.Builder makeGoogleCloudMessage(ArrayList<Action> actions) {
+    private Message.Builder makeGoogleCloudMessage(ArrayList<Action> actions, Environment environment,Boolean exitingEnvironment) {
         String json ;
         Message.Builder builder = new Message.Builder();
+        // Adiciona o id do ambiente alvo
+        builder.addData("environment", String.valueOf(environment.getId()));
+        builder.addData("exiting", exitingEnvironment.toString());
         for (int i = 0; i < actions.size();i++) {
             json = "{\"state\":\"";
             if (actions.get(i).getFunctionality().getId()!=9)

@@ -17,6 +17,7 @@ public class Parameters implements Serializable{
     private String userName;
     private String userPassword;
     private String deviceCode;
+    private String exiting;
 
     public int getEnvironmentId() {
         return environmentId;
@@ -48,6 +49,14 @@ public class Parameters implements Serializable{
 
     public void setUserPassword(String userPassword) {
         this.userPassword = userPassword;
+    }
+
+    public String getExiting() {
+        return exiting;
+    }
+
+    public void setExiting(String exiting) {
+        this.exiting = exiting;
     }
     
 }

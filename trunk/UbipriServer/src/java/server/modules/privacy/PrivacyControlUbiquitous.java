@@ -73,7 +73,7 @@ public class PrivacyControlUbiquitous {
         return false; // falta implementar
     }
     
-    public String onChangeCurrentUserLocalizationWithReturnAsynchronousActions(int environmentId, String userName, String userPassword, String deviceCode) {
+    public String onChangeCurrentUserLocalizationWithReturnAsynchronousActions(int environmentId, String userName, String userPassword, String deviceCode,Boolean exiting) {
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
@@ -102,7 +102,7 @@ public class PrivacyControlUbiquitous {
         eve.setDevice(dev);
         eve.setTime(new Date());
         eve.setEnvironment(user.getUsersEnvironment().getEnvironment());
-        eve.setEvent("Localization");
+        eve.setEvent((exiting)? "Leaving the location":"Entering the location");
         eve.setUser(user);
         envDAO.insertLog(eve);
         // Função de Busca de ações
@@ -114,7 +114,11 @@ public class PrivacyControlUbiquitous {
         ArrayList<Action> actions = this.getListActions(user, dev);
         // A partir de um Array de ações, gera o Json das ações {-- Falta a questão do tipo de comunicação a ser resolvida}
         // adiciona o status OK e o json das ações em uma única mensagem
-        makeAndSendMessage(dev.getPreferredDeviceCommunication(), actions); // Em breve enviar todas as comunicações
+        this.communication.sendActionsToDevice(
+                dev.getPreferredDeviceCommunication(), // Comunicação preferêncial, em breve trocar para coreografar entre todas as comunicações
+                actions, // Ações
+                user.getUsersEnvironment().getEnvironment(),
+                exiting); 
         // retorna mensagem
         return "{\"status\":\"OK\"}";
     }
@@ -129,7 +133,7 @@ public class PrivacyControlUbiquitous {
     }
     
 
-    public String onChangeCurrentUserLocalizationReturnActions(int environmentId, String userName, String userPassword, String deviceCode) {
+    public String onChangeCurrentUserLocalizationReturnActions(int environmentId, String userName, String userPassword, String deviceCode,Boolean exiting) {
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
@@ -159,7 +163,7 @@ public class PrivacyControlUbiquitous {
         eve.setDevice(dev);
         eve.setTime(new Date());
         eve.setEnvironment(user.getUsersEnvironment().getEnvironment());
-        eve.setEvent("Localization");
+        eve.setEvent((exiting)? "Leaving the location":"Entering the location");
         eve.setUser(user);
         envDAO.insertLog(eve);
         // Função de Busca de ações
@@ -265,14 +269,6 @@ public class PrivacyControlUbiquitous {
         return finalActions;
     }
 
-    private boolean makeAndSendMessage(DeviceCommunication deviceCommunication, ArrayList<Action> actions) {
-        if (this.communication.sendActionsToDevice(deviceCommunication, actions)) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
     private String makeMessage(ArrayList<Action> actions) {
         return this.makeMessage(actions, "OK");
     }
@@ -287,7 +283,7 @@ public class PrivacyControlUbiquitous {
         return json + "]}";
     }
     //private String messageActionsJSON(ArrayList<Action>, status)
-
+    // Método não utilizado
     public void onChangeCurrentUserLocalization(int environmentId, String deviceCode) {
         User user;
         // Verifica se dispositivo existe

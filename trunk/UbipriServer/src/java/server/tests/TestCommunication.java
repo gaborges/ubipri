@@ -15,7 +15,7 @@ public class TestCommunication {
         Communication comm = new Communication();
        // comm.onChangeCurrentUserLocalization(1, "guilherme","12345","1234554321");
         
-        String res = comm.onChangeCurrentUserLocalizationWithResponse(1, "borges","12345","1234554321");
+        String res = comm.onChangeCurrentUserLocalizationWithResponse(1, "borges","12345","1234554321",false);
         System.out.println("RES 2: "+res);
         
         //res = comm.onChangeCurrentUserLocalizationWithResponse(2, "guilherme","12345","1234554321");
