@@ -49,12 +49,9 @@ public class GoogleCloudMessageCommunication {
     messege.addData("AIRPLANE_MODE_STATE","{\"state\":\"on\",\"duration\":\"360\"}");
      */
     
-    
     public GoogleCloudMessageCommunication() {
     }
 
-    
-    
     public GoogleCloudMessageCommunication(String cloudApiKey) {
         this.cloudApiKey = cloudApiKey;
         sender = new Sender(apiKey);
