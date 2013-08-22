@@ -78,22 +78,31 @@ public class PrivacyControlUbiquitous {
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
-        boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
-        boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
+        // Verifica se o dispositivo está cadastrado
+        if(!this.devDAO.isDeviceRegistered(deviceCode)){
+            return "{\"status\":\"ERROR\"}"; 
+        }
+            // Funções para certificar que o usuário e o dispositivo mudaram de local -- Comentei pois não tratei a entrada e a saída, somente um caso
+        //boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
+       // boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
+        // upar novamente --
         // se nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente
-        if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
-            return "{\"status\":\"OK\"}";
-        }
+        //if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
+        //    return "{\"status\":\"OK\"}";
+        // }
         // Verifica se o usuário continua no mesmo ambiente, se sim continua, senão retorna status OK
-        if (hasChandedUserLocation) {
-            this.updateUserEnvironment(userName, environmentId); // em breve fazer mensagens dinâmicas (Existem protocolocos Diferentes)
-        }
+        //if (hasChandedUserLocation) {
+        //    this.updateUserEnvironment(userName, environmentId); // em breve fazer mensagens dinâmicas (Existem protocolocos Diferentes)
+        //}
         // Atualiza localização do Usuáriodo Dispositivo
-        if (hasChangedDeviceLocation) {
-            this.updateDeviceEnvironment(deviceCode, environmentId);
-        }
+        // if (hasChangedDeviceLocation) {
+        //    this.updateDeviceEnvironment(deviceCode, environmentId);
+        //}
+        
         // Busca Usuário no Ambiente e Device
         Device dev = this.devDAO.get(deviceCode);
+            // Busca as funcionalidades do Device
+        dev.setListFunctionalities(devDAO.getDeviceFunctionalities(dev.getId()));
         // Busca Tipo de ambiente - dentro do usuário
         // Busca Busca o tipo de acesso do usuário no ambiente
         User user = this.userDAO.getUserEnvironment(userName, environmentId);
@@ -138,6 +147,10 @@ public class PrivacyControlUbiquitous {
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
+        // Verifica se o dispositivo está cadastrado
+        if(!this.devDAO.isDeviceRegistered(deviceCode)){
+            return "{\"status\":\"ERROR\"}"; 
+        }
         boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
         boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
         // se nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente
@@ -154,6 +167,7 @@ public class PrivacyControlUbiquitous {
         }
         // Busca Usuário no Ambiente e Device
         Device dev = this.devDAO.get(deviceCode);
+            // Busca as funcionalidades do Device
         dev.setListFunctionalities(devDAO.getDeviceFunctionalities(dev.getId()));
         // Busca Tipo de ambiente - dentro do usuário
         // Busca Busca o tipo de acesso do usuário no ambiente

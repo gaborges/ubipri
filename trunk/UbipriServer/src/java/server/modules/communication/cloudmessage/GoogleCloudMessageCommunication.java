@@ -63,13 +63,13 @@ public class GoogleCloudMessageCommunication {
         build.delayWhileIdle(true);
         
         Message message = build.build();
-
+        System.out.println("Message GCM: "+message.toString());
         try {
             // envia a mensagem, 5 retries
             result = sender.send(message, device, 5);
 
         } catch (IOException e) {
-            System.out.println("Exception: " + e);
+            System.out.println("Class: "+GoogleCloudMessageCommunication.class+" Exception: " + e);
             return false;
         }
 

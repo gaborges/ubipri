@@ -396,7 +396,7 @@ public class DeviceDAO {
                             + " devcom_parameters, communication_type_id, comtyp_name "+
                         " FROM device_communication, communication_type "+
                         " WHERE communication_type_id = comtyp_id AND device_id = ? " +
-                        " ORDER BY devcom_preferred_order;";
+                        " ORDER BY devcom_preferred_order , devcom_id DESC ;";
 
            pstmt = getConnection().prepareStatement(sql);
      
