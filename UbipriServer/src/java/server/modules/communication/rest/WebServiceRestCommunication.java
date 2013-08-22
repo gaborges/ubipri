@@ -56,7 +56,7 @@ public class WebServiceRestCommunication {
      * @param String userName, String userPassword, String deviceCode,
      * newCommunicationCode:String, [deviceName: String]. Message Format:
      * {"userName":"user_name", "userPassword":"12345",
-     * "deviceCode":"Ae123sadSfas4fa", "communicationCode":"AABBCC321",
+     * "deviceCode":"Ae123sdevcom_addressadSfas4fa", "communicationCode":"AABBCC321",
      * "deviceName":"Smartphone do Bruno"}
      * @return Status of the operation in the Server. Return Message Format:
      * {"status":"OK"},{"status":"ERROR"} or{"status":"DENY"}

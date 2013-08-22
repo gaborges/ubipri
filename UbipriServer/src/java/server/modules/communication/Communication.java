@@ -45,7 +45,7 @@ public class Communication {
     public boolean sendActionsToDevice(DeviceCommunication devComm,ArrayList<Action> actions, Environment environment, Boolean exitingEnvironment){
         System.out.println("id:"+devComm.getId()+",Communication Type = {id:"+devComm.getCommunicationType().getId()
                 +",name:"+devComm.getCommunicationType().getName()+"},Ip: "
-                +devComm.getAddress()+" port: " + devComm.getPort() );
+                +devComm.getAddress()+" port: " + devComm.getPort()+"}");
         switch(devComm.getCommunicationType().getId()){
             case 1:// SOCKET
                 System.out.println("Envio de mensagens por socket não implementada");  
@@ -57,7 +57,7 @@ public class Communication {
                 System.out.println("Envio de mensagens por Web Service Rest não implementada");
                 break;
             case 4:// GOOGLE CLOUD MESSAGE
-                System.out.println("Envio de mensagens por Google Cloud Message não implementada");
+                System.out.println("Envio de mensagens por Google Cloud Message, device GCM id ="+devComm.getParameters()+"");
                 Message.Builder build = makeGoogleCloudMessage(actions,environment, exitingEnvironment);
                 //GoogleCloudMessageCommunication ms = new GoogleCloudMessageCommunication();
                 //ms.sendToBrunoDevice(actions); // Para testes
@@ -93,6 +93,8 @@ public class Communication {
         // Adiciona o id do ambiente alvo
         builder.addData("environment", String.valueOf(environment.getId()));
         builder.addData("exiting", exitingEnvironment.toString());
+        // number of actions
+        System.out.println("Number of actions: "+actions.size());
         for (int i = 0; i < actions.size();i++) {
             json = "{\"state\":\"";
             if (actions.get(i).getFunctionality().getId()!=9)
@@ -165,8 +167,8 @@ public class Communication {
                 case 15: // GPS_STATUS
                     builder.addData("GPS_STATUS", json);
                         break;
-                } 
-        
+            } 
+            //System.out.println("functionality_id: "+actions.get(i).getFunctionality().getId()+"JSON: "+json);
         }
         return builder;
     }
