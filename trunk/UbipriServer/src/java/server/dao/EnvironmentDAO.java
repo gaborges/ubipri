@@ -323,7 +323,7 @@ public class EnvironmentDAO {
         }
         //this.db.disconnect();
     }
-
+    
     public int getLastUpdatedVersion() {
         String sql = "  SELECT max(env_version) as last_version FROM environment; ";
         int version = 0;
