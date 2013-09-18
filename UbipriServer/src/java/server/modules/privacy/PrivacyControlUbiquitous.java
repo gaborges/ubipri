@@ -419,6 +419,7 @@ public class PrivacyControlUbiquitous {
             environmentJSON.put("id", e.getId());
             environmentJSON.put("version", e.getVersion());
             environmentJSON.put("name", e.getName());
+            environmentJSON.put("locationType", e.getLocalizationType().getName());
             environmentJSON.put("latitude", e.getLatitude());
             environmentJSON.put("longitude", e.getLongitude());
             environmentJSON.put("altitude", e.getAltitude());

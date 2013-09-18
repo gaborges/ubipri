@@ -4,6 +4,7 @@
  */
 package server.modules.communication.rest;
 
+import com.sun.jersey.core.util.Base64;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -11,6 +12,7 @@ import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Path;
 import javax.ws.rs.GET;
+import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import server.modules.communication.Communication;
@@ -18,6 +20,7 @@ import server.modules.communication.GetEnvironmentParametens;
 import server.modules.communication.InsertCommunicationCodeParameters;
 import server.modules.communication.Parameters;
 import server.modules.privacy.PrivacyControlUbiquitous;
+
 
 /**
  * REST Web Service
@@ -65,7 +68,19 @@ public class WebServiceRestCommunication {
     @Path("/insert/communicationCode/gcm")
     @Consumes("application/json")
     @Produces("application/json")
-    public String insertGoogleCloudMessageCommunicationCode(InsertCommunicationCodeParameters p) {
+    public String insertGoogleCloudMessageCommunicationCode(InsertCommunicationCodeParameters p,
+            @HeaderParam("Authentication") String auth) {
+        // Cheva se a autenticação está vindo por parâmetro
+        if(auth != null){
+            String a[] = auth.split(" ");
+            String o = new String(Base64.decode(a[1]));
+            //System.out.println("base64: "+auth+" -  desconvertido: "+o);
+            a = o.split(":");
+            if(a.length > 1){
+                p.setUserName(a[0]);     // Login
+                p.setUserPassword(a[1]); // Password
+            }
+        }
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         //System.out.println(p.toString());
         return comm.onInsertNewCommunicationCode(
@@ -107,7 +122,19 @@ public class WebServiceRestCommunication {
     @Path("/change/location/json")
     @Consumes("application/json")
     @Produces("application/json")
-    public String onChangeCurrentUserLocalization(Parameters p) {
+    public String onChangeCurrentUserLocalization(Parameters p,
+            @HeaderParam("Authentication") String auth) {
+        // Cheva se a autenticação está vindo por parâmetro
+        if(auth != null){
+            String a[] = auth.split(" ");
+            String o = new String(Base64.decode(a[1]));
+            //System.out.println("base64: "+auth+" -  desconvertido: "+o);
+            a = o.split(":");
+            if(a.length > 1){
+                p.setUserName(a[0]);     // Login
+                p.setUserPassword(a[1]); // Password
+            }
+        }
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         return comm.onChangeCurrentUserLocalization(
                 p.getEnvironmentId(), p.getUserName(), p.getUserPassword(), p.getDeviceCode(),
@@ -134,7 +161,19 @@ public class WebServiceRestCommunication {
     @Path("/change/location/json/response")
     @Consumes("application/json")
     @Produces("application/json")
-    public String onChangeCurrentUserLocalizationWithResponse(Parameters p) {
+    public String onChangeCurrentUserLocalizationWithResponse(Parameters p,
+            @HeaderParam("Authentication") String auth) {
+        // Cheva se a autenticação está vindo por parâmetro
+        if(auth != null){
+            String a[] = auth.split(" ");
+            String o = new String(Base64.decode(a[1]));
+            //System.out.println("base64: "+auth+" -  desconvertido: "+o);
+            a = o.split(":");
+            if(a.length > 1){
+                p.setUserName(a[0]);     // Login
+                p.setUserPassword(a[1]); // Password
+            }
+        }
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         //System.out.println("{"+p.getDeviceCode()+","+p.getUserName()+","+p.getEnvironmentId()+"}");
         return comm.onChangeCurrentUserLocalizationWithResponse(
@@ -161,7 +200,18 @@ public class WebServiceRestCommunication {
     public String validateRemoteLoginUser(
             @PathParam("login") String userName,
             @PathParam("password") String userPassword,
-            @PathParam("device") String deviceCode) {
+            @PathParam("device") String deviceCode,
+            @HeaderParam("Authentication") String auth) {
+        if(auth != null){
+            String a[] = auth.split(" ");
+            String o = new String(Base64.decode(a[1]));
+            //System.out.println("base64: "+auth+" -  desconvertido: "+o);
+            a = o.split(":");
+            if(a.length > 1){
+                userName = a[0];     // Login
+                userPassword = a[1]; // Password
+            }
+        }
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         return comm.validateRemoteLoginUser(userName, userPassword, deviceCode);
     }
@@ -222,7 +272,20 @@ public class WebServiceRestCommunication {
     @Path("/get/environment/map/json")
     @Consumes("application/json")
     @Produces("application/json")
-    public String getAmbientesJson(GetEnvironmentParametens p) {
+    public String getAmbientesJson(GetEnvironmentParametens p,
+            @HeaderParam("Authentication") String auth) {
+        // Cheva se a autenticação está vindo por parâmetro
+        if(auth != null){
+            String a[] = auth.split(" ");
+            String o = new String(Base64.decode(a[1]));
+            //System.out.println("base64: "+auth+" -  desconvertido: "+o);
+            a = o.split(":");
+            if(a.length > 1){
+                p.setUserName(a[0]);     // Login
+                p.setUserPassword(a[1]); // Password
+            }
+        }
+        
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         System.out.println("res: "+p.toString());
         
