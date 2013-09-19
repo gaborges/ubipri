@@ -4,7 +4,6 @@
  */
 package server.modules.privacy;
 
-import java.sql.Time;
 import java.util.ArrayList;
 import java.util.Date;
 import org.json.simple.JSONArray;
@@ -69,10 +68,6 @@ public class PrivacyControlUbiquitous {
         this.communication = communication;
     }
 
-    public boolean onChangeCurrentUserLocalization(int environmentId, String userName, String userPassword, String deviceCode) {
-        return false; // falta implementar
-    }
-    
     public String onChangeCurrentUserLocalizationWithReturnAsynchronousActions(int environmentId, String userName, String userPassword, String deviceCode,Boolean exiting) {
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
@@ -297,7 +292,8 @@ public class PrivacyControlUbiquitous {
         return json + "]}";
     }
     //private String messageActionsJSON(ArrayList<Action>, status)
-    // Método não utilizado
+    // Método não utilizado - Deprecated
+    @Deprecated
     public void onChangeCurrentUserLocalization(int environmentId, String deviceCode) {
         User user;
         // Verifica se dispositivo existe

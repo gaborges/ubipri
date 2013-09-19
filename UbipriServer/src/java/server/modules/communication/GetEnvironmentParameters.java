@@ -12,7 +12,7 @@ import javax.xml.bind.annotation.XmlRootElement;
  * @author guilherme
  */
 @XmlRootElement
-public class GetEnvironmentParametens implements Serializable {
+public class GetEnvironmentParameters implements Serializable {
     private String userName;
     private String userPassword;
     private String deviceCode;

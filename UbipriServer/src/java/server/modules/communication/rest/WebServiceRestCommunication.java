@@ -16,7 +16,7 @@ import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import server.modules.communication.Communication;
-import server.modules.communication.GetEnvironmentParametens;
+import server.modules.communication.GetEnvironmentParameters;
 import server.modules.communication.InsertCommunicationCodeParameters;
 import server.modules.communication.Parameters;
 import server.modules.privacy.PrivacyControlUbiquitous;
@@ -272,7 +272,7 @@ public class WebServiceRestCommunication {
     @Path("/get/environment/map/json")
     @Consumes("application/json")
     @Produces("application/json")
-    public String getAmbientesJson(GetEnvironmentParametens p,
+    public String getAmbientesJson(GetEnvironmentParameters p,
             @HeaderParam("Authentication") String auth) {
         // Cheva se a autenticação está vindo por parâmetro
         if(auth != null){
@@ -285,7 +285,7 @@ public class WebServiceRestCommunication {
                 p.setUserPassword(a[1]); // Password
             }
         }
-        
+      
         Communication comm = new Communication(new PrivacyControlUbiquitous());
         System.out.println("res: "+p.toString());
         
