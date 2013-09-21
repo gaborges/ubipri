@@ -69,11 +69,11 @@ public class PrivacyControlUbiquitous {
     }
 
     public String onChangeCurrentUserLocalizationWithReturnAsynchronousActions(int environmentId, String userName, String userPassword, String deviceCode,Boolean exiting) {
-        // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
+        // Verifica login e senha do usuário conferem acesso ao serviço, se sim retorna o status OK e continua senão retorna Status DENY; 
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
-        // Verifica se o dispositivo está cadastrado
+        // Verifica se o dispositivo está cadastrado, se não estiver retorna ERROR;
         if(!this.devDAO.isDeviceRegistered(deviceCode)){
             return "{\"status\":\"ERROR\"}"; 
         }
@@ -98,10 +98,9 @@ public class PrivacyControlUbiquitous {
         Device dev = this.devDAO.get(deviceCode);
             // Busca as funcionalidades do Device
         dev.setListFunctionalities(devDAO.getDeviceFunctionalities(dev.getId()));
-        // Busca Tipo de ambiente - dentro do usuário
-        // Busca Busca o tipo de acesso do usuário no ambiente
+        // Busca Tipo de ambiente e o tipo de acesso do usuário no ambiente;
         User user = this.userDAO.getUserEnvironment(userName, environmentId);
-        // Salva Log de acesso (Contexto de Localização)
+        // Cria e salva Log de acesso (Contexto de Localização);
         LogEvent eve = new LogEvent();
         eve.setDevice(dev);
         eve.setTime(new Date());
@@ -118,12 +117,13 @@ public class PrivacyControlUbiquitous {
         ArrayList<Action> actions = this.getListActions(user, dev);
         // A partir de um Array de ações, gera o Json das ações {-- Falta a questão do tipo de comunicação a ser resolvida}
         // adiciona o status OK e o json das ações em uma única mensagem
+        // Envia ao dispositivo uma mensagem contendo as ações. OBS.: O formato da mensagem é tratado na classe Communication 
         this.communication.sendActionsToDevice(
                 dev.getPreferredDeviceCommunication(), // Comunicação preferêncial, em breve trocar para coreografar entre todas as comunicações
                 actions, // Ações
                 user.getUsersEnvironment().getEnvironment(),
                 exiting); 
-        // retorna mensagem
+        // retorna o estado OK da função;
         return "{\"status\":\"OK\"}";
     }
     
@@ -138,7 +138,7 @@ public class PrivacyControlUbiquitous {
     
 
     public String onChangeCurrentUserLocalizationReturnActions(int environmentId, String userName, String userPassword, String deviceCode,Boolean exiting) {
-        // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
+            // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
             return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
         }
@@ -148,26 +148,25 @@ public class PrivacyControlUbiquitous {
         }
         boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
         boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
-        // se nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente
+        // Caso nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente, retorna OK;
         if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
             return "{\"status\":\"OK\"}";
         }
-        // Verifica se o usuário continua no mesmo ambiente, se sim continua, senão retorna status OK
+        // Verifica se o usuário continua no mesmo ambiente, se não atualiza a localização
         if (hasChandedUserLocation) {
             this.updateUserEnvironment(userName, environmentId); // em breve fazer mensagens dinâmicas (Existem protocolocos Diferentes)
         }
-        // Atualiza localização do Usuáriodo Dispositivo
+        // Verifica se o dispositivo continua no mesmo ambiente, se não atualiza localização
         if (hasChangedDeviceLocation) {
             this.updateDeviceEnvironment(deviceCode, environmentId);
         }
-        // Busca Usuário no Ambiente e Device
+        // Busca as informações do Usuário no Ambiente e do Device
         Device dev = this.devDAO.get(deviceCode);
             // Busca as funcionalidades do Device
         dev.setListFunctionalities(devDAO.getDeviceFunctionalities(dev.getId()));
-        // Busca Tipo de ambiente - dentro do usuário
-        // Busca Busca o tipo de acesso do usuário no ambiente
+        // Busca Tipo de ambiente e o tipo de acesso do usuário no ambiente;
         User user = this.userDAO.getUserEnvironment(userName, environmentId);
-        // Salva Log de acesso (Contexto de Localização)
+        // Cria e salva Log de acesso (Contexto de Localização);
         LogEvent eve = new LogEvent();
         eve.setDevice(dev);
         eve.setTime(new Date());
@@ -246,35 +245,41 @@ public class PrivacyControlUbiquitous {
     // Função de Busca de ações
     private ArrayList<Action> getListActions(int environmentId, String userName, String deviceCode) {
         int j = 0, i = 0;
+        // Instancia uma lista de ações que conterá as regras a serem retornadas;
+        ArrayList<Action> finalActions = new ArrayList<Action>(), customActions = new ArrayList<Action>();
+        // Busca as informações sobre o dipositivo, bem como as funcionalidades que ele suporta
         Device dev = this.devDAO.get(deviceCode);
-        // Busca Tipo de ambiente - dentro do usuário
-        // Busca Busca o tipo de acesso do usuário no ambiente
+        // Busca Tipo de ambiente e o tipo de acesso do usuário no ambiente;
         User user = this.userDAO.getUserEnvironment(userName, environmentId);
-        // Busca o nível de acesso do usuário e ações default
-        AccessLevel nivelAcesso = this.accLevDAO.get(
+        // Busca as regras (ações) padrão do nível de acesso resultante pelo tipo de tipo de ambiente e do tipo de acesso;
+        AccessLevel accessLevel = this.accLevDAO.get(
                 user.getCurrentEnvironment().getEnvironmentType(),
                 user.getUsersEnvironment().getCurrentAccessType());
         // Busca se há ações customizadas
-        ArrayList<Action> finalActions = new ArrayList<Action>(), customActions = this.actDAO.getCustomActions(environmentId, nivelAcesso.getId());
+        customActions = this.actDAO.getCustomActions(environmentId, accessLevel.getId());
         // Sobrepoem as ações Default pelas customizadas
+        // Seleciona na lista somente as ações referentes as funcionalidades que o dispositivo visado suporta, não considerando as demais. 
+            // Inicia adicionando as ações padrão, caso exista alguma ação customizadas para o ambiente equivalente 
+            // a alguma ação padrão então sobre escreve-á pela ação customizada equivalente;
         if (customActions.size() > 0) {
-            for (i = 0; i < nivelAcesso.getActionsList().size(); i++) {
+            for (i = 0; i < accessLevel.getActionsList().size(); i++) {
                 for (j = 0; j < customActions.size(); j++) {
-                    if (nivelAcesso.getActionsList().get(i).getId() == customActions.get(j).getId()) {
-                        nivelAcesso.getActionsList().set(i, customActions.get(j));
+                    if (accessLevel.getActionsList().get(i).getId() == customActions.get(j).getId()) {
+                        accessLevel.getActionsList().set(i, customActions.get(j));
                     }
                 }
             }
         }
 
-        // Filtra pelo número de funcionalidades que o device possui    
-        for (i = 0; i < nivelAcesso.getActionsList().size(); i++) {
+        // Seleciona na lista somente as ações referentes as funcionalidades que o dispositivo visado suporta, eliminando as demais;    
+        for (i = 0; i < accessLevel.getActionsList().size(); i++) {
             for (j = 0; j < dev.getListFunctionalities().size(); j++) {
-                if (dev.getListFunctionalities().get(j).getId() == nivelAcesso.getActionsList().get(i).getFunctionality().getId()) {
-                    finalActions.add(nivelAcesso.getActionsList().get(i));
+                if (dev.getListFunctionalities().get(j).getId() == accessLevel.getActionsList().get(i).getFunctionality().getId()) {
+                    finalActions.add(accessLevel.getActionsList().get(i));
                 }
             }
         }
+        // Retorna a lista com as ações, se o dispositivo não possuía funcionalidades a lista retorna vazia
         return finalActions;
     }
 
@@ -283,12 +288,32 @@ public class PrivacyControlUbiquitous {
     }
 
     private String makeMessage(ArrayList<Action> actions, String status) {
+        /* Inicia a mensagem adicionando o status e adicionando o nome do array */
         String json = "{\"status\":\"" + status + "\",\"actions\":[";
+        /* Gera as ações no formato JSON baseado na lista  de ações passado por parâmetro */
         for (int i = 0; i < actions.size();i++) {
             json += "{\"fid\":" + actions.get(i).getFunctionality().getId() 
                     + ",\"action\":\"" + actions.get(i).getAction() + "\"}";
             if(i != (actions.size()-1)) json += ",";
         }
+        
+        /* pode ser feito usando JSON object */
+        /* Instancia os objetos a serem utilizados;
+        JSONObject message = new JSONObject(), temp;
+        JSONArray jActions = new JSONArray();
+        /* Gera as ações no formato JSON baseado na lista de ações passado por parâmetro;
+        for (Action action : actions) {
+            temp = new JSONObject();
+            temp.put("fid", action.getFunctionality().getId());   
+            temp.put("action", action.getAction());
+            jActions.add(temp);
+        }
+        /* Adiciona o status e a lista na mensagem;
+        message.put("status", status);
+        message.put("actions", jActions);
+        * Retorna a mensagem em formato JSON.
+        return message.toJSONString(); */
+        /* Retorna a mensagem em formato JSON. */
         return json + "]}";
     }
     //private String messageActionsJSON(ArrayList<Action>, status)
@@ -381,35 +406,34 @@ public class PrivacyControlUbiquitous {
     }
     
     public String getJsonEnvironments(String userName,String userPassword, String deviceCode,int version){
-        // Verifica se o usuário possui permissão
+        /* Verifica se o usuário possui permissão */
         if (!this.userHasAccessPermission(userName, userPassword)) {
-            return "{\"status\":\"DENY\"}"; // em breve fazer mensagens dinâmicas (Existem protocolos Diferentes)
-        }
-        
-        // Verifica se o dispositivo existe, se sim continua
+            return "{\"status\":\"DENY\"}";
+        }  
+        /* Verifica se o dispositivo está cadastrado, se não estiver retorna ERROR */
         if(!this.devDAO.isDeviceRegistered(deviceCode)){
             return "{\"status\":\"DENY\"}";
         }
-        // Retorna a última versão atualizada no banco de dados
+        /* Retorna a última versão atualizada no banco de dados */
         int lastVersion = this.envDAO.getLastUpdatedVersion();
-        // Compara se a versão passada é a última, se sim retorna mensagem OK
+        /* Compara se a versão passada é a última, se sim retorna mensagem OK */
         if(version >= lastVersion){
             return "{\"status\":\"OK\",\"version\":\""+lastVersion+"\"}";
         }
-        // Busca ambientes iniciando pela atualização
+        /* Busca ambientes iniciando pela atualização */
         ArrayList<Environment> list = this.envDAO.getListByVersion(version);
-        // Gera o JSON    
-        // retorna o JSON
+        /* Gera e retorna o JSON. Através da função makeJsonEnviromentMap */
         return this.makeJsonEnviromentMap(list,lastVersion);
     }
     
     public String makeJsonEnviromentMap(ArrayList<Environment> list,int version){
-        
+        /* Instancia os objetos que serão usados na função */
         JSONObject root = new JSONObject(), environmentJSON, point;
         JSONArray environments = new JSONArray(), pointsArrayJSON;
+        /* Adiciona o status da mensagem e a última versão */
         root.put("status", "UPDATED");
         root.put("version", version);
-        
+        /* Converte as informações dos ambientes em JSON acicionando do JSONArray */
         for(Environment e : list){
             environmentJSON = new JSONObject();
             environmentJSON.put("id", e.getId());
@@ -432,8 +456,9 @@ public class PrivacyControlUbiquitous {
             environmentJSON.put("map", pointsArrayJSON);
             environments.add(environmentJSON);
         }
-        
+        /* Troca adiciona na mensagem os ambientes convertidos */
         root.put("environments",environments);
+        /* Retorna a mensagem */
         return root.toJSONString();
     }
     
