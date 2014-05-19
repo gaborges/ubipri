@@ -300,11 +300,12 @@ public class EnvironmentDAO {
      */
     public void insertLog(LogEvent o) {
         String sql =
-                " INSERT INTO log_event (log_time,user_id,environment_id,log_code,device_id,log_event) "
-                + " VALUES (?,?,?,?,?,?); ";
+                " INSERT INTO log_event (log_time,user_id,environment_id,log_code,device_id,log_event,log_shift,log_weekday,log_workday) "
+                + " VALUES (?,?,?,?,?,?,?,?,?); ";
         if (Config.debugSQL) {
             System.out.println(" INSERT LOG: " + o.getTime().toString() + "," + o.getUser().getId() + ","
-                    + o.getEnvironment().getId() + "," + o.getCurrentData() + "," + o.getDevice().getId() + "," + o.getEvent());
+                    + o.getEnvironment().getId() + "," + o.getCurrentData() + "," + o.getDevice().getId() + "," + o.getEvent()+"," 
+                    + o.getShift()+"," + o.getWeekday()+"," + o.getWorkday());
         }
         //this.db.connect();
         try {
@@ -315,6 +316,9 @@ public class EnvironmentDAO {
             pstmt.setString(4, o.getCurrentData());
             pstmt.setInt(5, o.getDevice().getId());
             pstmt.setString(6, o.getEvent());
+            pstmt.setString(7, o.getShift().toString());
+            pstmt.setInt(8, o.getWeekday());
+            pstmt.setString(9, o.getWorkday().toString());
             pstmt.execute();
             pstmt.close();
 

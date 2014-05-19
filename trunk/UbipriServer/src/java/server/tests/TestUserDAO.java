@@ -26,6 +26,24 @@ public class TestUserDAO {
         //testGet(); //- OK
         //testGetAll(); //- OK
         //testGetListWithPagination(); // -- ok
+        //testGetUserEnvironment(); //- OK
+        //testGetUserEnvironmentDois(); //- OK
+        //testGetUserAfterUpdateUserEnvironment(); //- OK
+    }
+    
+    public static void testGetUserEnvironment(){
+        User u =  dao.getUserEnvironment("borges", 1);
+        System.out.println(u.getUserName()+","+u.getUsersEnvironment().getUserProfile().getName()+","+u.getCurrentEnvironment().getName());
+    }
+    
+    public static void testGetUserEnvironmentDois(){
+        User u =  dao.getUserEnvironment(1, 2);
+        System.out.println(u.getUserName()+","+u.getUsersEnvironment().getUserProfile().getName()+","+u.getCurrentEnvironment().getName());
+    }
+    
+    public static void testGetUserAfterUpdateUserEnvironment(){
+        User u =  dao.getUserAfterUpdateUserEnvironment(1, 1);
+        System.out.println(u.getUserName()+","+u.getUsersEnvironment().getUserProfile().getName()+","+u.getCurrentEnvironment().getName());
     }
 
     public static void testInsert() {

@@ -9,7 +9,7 @@ package server.util;
  * @author Estudo
  */
 public class Config {
-    public static String dbName     = "localizapos";
+    public static String dbName     = "ubipri";
     public static String dbServer   = "localhost";
     public static String dbUser     = "postgres";
     public static String dbPassword = "postgres";

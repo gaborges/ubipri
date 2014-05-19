@@ -11,7 +11,7 @@ package server.model;
 public class UserEnvironment {
     private Integer id;
     private Environment environment;
-    private double impactFactor;
+    private UserProfileEnvironment userProfile;
     private AccessType currentAccessType;
 
     public Integer getId() {
@@ -30,14 +30,6 @@ public class UserEnvironment {
         this.environment = environment;
     }
 
-    public double getImpactFactor() {
-        return impactFactor;
-    }
-
-    public void setImpactFactor(double impactFactor) {
-        this.impactFactor = impactFactor;
-    }
-
     public AccessType getCurrentAccessType() {
         return currentAccessType;
     }
@@ -45,7 +37,13 @@ public class UserEnvironment {
     public void setCurrentAccessType(AccessType currentAccessType) {
         this.currentAccessType = currentAccessType;
     }
-    
-    
+
+    public UserProfileEnvironment getUserProfile() {
+        return userProfile;
+    }
+
+    public void setUserProfile(UserProfileEnvironment userProfile) {
+        this.userProfile = userProfile;
+    }
     
 }
