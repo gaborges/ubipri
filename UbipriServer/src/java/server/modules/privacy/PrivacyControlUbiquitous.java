@@ -17,18 +17,15 @@ import server.model.AccessLevel;
 import server.model.AccessType;
 import server.model.Action;
 import server.model.Device;
-import server.model.DeviceCommunication;
 import server.model.DeviceType;
 import server.model.Environment;
-import server.model.EnvironmentType;
-import server.model.Functionality;
 import server.model.LogEvent;
 import server.model.Point;
 import server.model.User;
-import server.model.UserEnvironment;
+import server.model.classify.Classifier;
+import server.model.classify.ClassifierFactory;
 import server.modules.communication.Communication;
 import server.util.AccessBD;
-import server.util.Config;
 import server.util.SingleConnection;
 
 /**
@@ -169,18 +166,21 @@ public class PrivacyControlUbiquitous {
         // Cria e salva Log de acesso (Contexto de Localização);
         LogEvent eve = new LogEvent();
         eve.setDevice(dev);
-        eve.setTime(new Date());
+        eve.setTimeVariables(eve,new Date());
+        eve.setShift(Character.MIN_VALUE); //
+        eve.setWeekday(environmentId);
+        eve.setWorkday(Character.MIN_VALUE);
         eve.setEnvironment(user.getUsersEnvironment().getEnvironment());
         eve.setEvent((exiting)? "Leaving the location":"Entering the location");
         eve.setUser(user);
-        envDAO.insertLog(eve);
+        envDAO.insertLog(eve); /// Terminar de alterar
         // Função de Busca de ações
         // Busca Tipo de ambiente
         // Busca Busca o tipo de acesso do usuário no ambiente
         // Busca o nível de acesso do usuário e ações default
         // Busca se há ações customizadas
         // Sobrepoem as ações Default pelas customizadas
-        ArrayList<Action> actions = this.getListActions(user, dev);
+        ArrayList<Action> actions = this.getListActions(user, dev, eve);
         // A partir de um Array de ações, gera o Json das ações
         // adiciona o status OK e o json das ações em uma única mensagem
         // envia por chamada assincrona
@@ -283,6 +283,51 @@ public class PrivacyControlUbiquitous {
         return finalActions;
     }
 
+    private ArrayList<Action> getListActions(User userEnvironment, Device device, LogEvent event) {
+        int i, j;
+        // Gera o classificador
+        Classifier classifier = ClassifierFactory.create("NotImplemented"); // Não implementado
+        // Classifica o tipo de acesso baseado nos 5 parâmetros (Profile,Tipo de Ambiente,Turno,Dia útil, Dia de semana)
+        AccessType accessTypeClassified  = classifier.classify(
+                userEnvironment.getUsersEnvironment().getUserProfile(), // Tipo de Profile: 1;"Unknown" 2;"Transient" 3;"User" 4;"Responsible" 5;"Student" 6;"Manager"
+                userEnvironment.getUsersEnvironment().getEnvironment().getEnvironmentType(),  // Tipo de Ambiente: 1;"Blocked" 2;"Private" 3;"Public"
+                event.getShift(),   // Turno:               LogEvent.DAY_SHIFT ou NIGHT_SHIFT
+                event.getWorkday(), // Se é dia útil:       LogEvent.YES_WORKDAY ou NOT_WORKDAY
+                event.getWeekday());// Se é dia de semana:  LogEvent.DAY_OF_WEEK; ou LogEvent.DAY_OF_WEEKEND;
+        
+        // Busca o nível de acesso do usuário e ações default
+        AccessLevel accessLevel = this.accLevDAO.get( //
+                userEnvironment.getUsersEnvironment().getEnvironment().getEnvironmentType(),
+                accessTypeClassified); // old: userEnvironment.getUsersEnvironment().getCurrentAccessType()
+        // Busca ações customizadas
+        ArrayList<Action> finalActions = new ArrayList<Action>(),
+                customActions = this.actDAO.getCustomActions(
+                userEnvironment.getUsersEnvironment().getEnvironment(), accessLevel);
+
+        // Sobrepoem as ações Default pelas customizadas
+        if (customActions.size() > 0) {
+            for (i = 0; i < accessLevel.getActionsList().size(); i++) {
+                for (j = 0; j < customActions.size(); j++) {
+                    if (accessLevel.getActionsList().get(i).getId() == customActions.get(j).getId()) {
+                        accessLevel.getActionsList().set(i, customActions.get(j));
+                    }
+                }
+            }
+        }
+
+        // Filtra pelo número de funcionalidades que o device possui    
+        for (i = 0; i < accessLevel.getActionsList().size(); i++) {
+            for (j = 0; j < device.getListFunctionalities().size(); j++) {
+                // System.out.println("De");
+                if (device.getListFunctionalities().get(j).getId() == accessLevel.getActionsList().get(i).getFunctionality().getId()) {
+                    finalActions.add(accessLevel.getActionsList().get(i));
+                }
+            }
+        }
+        //System.out.println("TAM L.D.: "+accessLevel.getActionsList().size()+",L.C.:"+customActions.size()+",L.F.:"+accessLevel.getActionsList().size()+",D.Func.:"+device.getListFunctionalities().size());
+        return finalActions;        
+    }
+    
     private String makeMessage(ArrayList<Action> actions) {
         return this.makeMessage(actions, "OK");
     }
@@ -316,52 +361,7 @@ public class PrivacyControlUbiquitous {
         /* Retorna a mensagem em formato JSON. */
         return json + "]}";
     }
-    //private String messageActionsJSON(ArrayList<Action>, status)
-    // Método não utilizado - Deprecated
-    @Deprecated
-    public void onChangeCurrentUserLocalization(int environmentId, String deviceCode) {
-        User user;
-        // Verifica se dispositivo existe
-        if (this.isDeviceRegistered(deviceCode)) {
-            user = this.userDAO.getUserByDeviceCode(deviceCode);
-            
-            boolean hasChandedUserLocation = this.hasChangedUserEnvironment(user.getUserName(), environmentId);
-            boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
-      
-            if(Config.debugPrivacyModule)System.out.println("Usuário no Ambiente: "+hasChandedUserLocation);
-            if(Config.debugPrivacyModule)System.out.println("Dispositivo no Ambiente: "+hasChangedDeviceLocation);
-            // se nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente
-            if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
-                return;
-            }
-            // Verifica se o usuário continua no mesmo ambiente
-            if (hasChandedUserLocation) {
-                this.updateUserEnvironment(user.getUserName(), environmentId); // em breve fazer mensagens dinâmicas (Existem protocolocos Diferentes)
-            }
-            // Verifica se o device mudou de ambiente e atualiza localização do Dispositivo
-            if (hasChangedDeviceLocation) {
-                this.updateDeviceEnvironment(deviceCode, environmentId);
-            }
-        } else {
-            return;
-        }
-
-        // Busca Usuário no Ambiente e Device
-        Device dev = this.devDAO.get(deviceCode);
-        // Busca Tipo de ambiente - dentro do usuário
-        // Busca Busca o tipo de acesso do usuário no ambiente
-        user = this.userDAO.getUserEnvironment(user.getUserName(), environmentId);
-        // Salva Log de acesso (Contexto de Localização)
-        LogEvent eve = new LogEvent();
-        eve.setDevice(dev);
-        eve.setTime(new Date());
-        eve.setEnvironment(user.getUsersEnvironment().getEnvironment());
-        eve.setEvent("Localization");
-        eve.setUser(user);
-        envDAO.insertLog(eve);
-
-    }
-
+    
     private boolean isDeviceRegistered(String deviceCode) {
         return this.devDAO.isDeviceRegistered(deviceCode);
     }
@@ -461,5 +461,5 @@ public class PrivacyControlUbiquitous {
         /* Retorna a mensagem */
         return root.toJSONString();
     }
-    
+   
 }

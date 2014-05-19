@@ -13,6 +13,7 @@ import server.model.AccessType;
 import server.model.Environment;
 import server.model.User;
 import server.model.UserEnvironment;
+import server.model.UserProfileEnvironment;
 import server.util.AccessBD;
 import server.util.SingleConnection;
 
@@ -355,9 +356,10 @@ public class UserDAO {
                 " SELECT use_name, use_password, use_full_name, current_environment_id, "
                 + " userenv_id,useenv_impact_factor, current_access_type_id, acctyp_name, "
                 + " env_id, env_name, env_latitude, env_longitude, localization_type_id, "
-                + " loctyp_name, loctyp_precision, loctyp_metric "
-                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type "
+                + " loctyp_name, loctyp_precision, loctyp_metric, useproenv_id, useproenv_name "
+                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type, user_profile_environment "
                 + " WHERE user_id = use_id AND acctyp_id = current_access_type_id "
+                + " AND user_profile_environment_id = useproenv_id "
                 + " AND localization_type_id = loctyp_id "
                 + " AND environment_id = env_id AND environment_type_id = envtyp_id  "
                 + " AND environment_id = ? AND use_id = ? ;";
@@ -381,7 +383,7 @@ public class UserDAO {
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
 
                 useEnv.setId(rs.getInt("userenv_id"));
-                useEnv.setImpactFactor(rs.getDouble("useenv_impact_factor"));
+                useEnv.setUserProfile(new UserProfileEnvironment(rs.getInt("useproenv_id"), rs.getString("useproenv_name")));
                 useEnv.setCurrentAccessType(
                         new AccessType(rs.getInt("current_access_type_id"), rs.getString("acctyp_name")));
                 useEnv.setEnvironment(envDAO.get(rs.getInt("env_id"), false));
@@ -401,9 +403,10 @@ public class UserDAO {
                 " SELECT use_id, use_password, use_full_name, current_environment_id, environment_id, "
                 + " userenv_id,useenv_impact_factor, current_access_type_id, acctyp_name, "
                 + " env_id, env_name, env_latitude, env_longitude, localization_type_id, "
-                + " loctyp_name, loctyp_precision, loctyp_metric "
-                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type "
+                + " loctyp_name, loctyp_precision, loctyp_metric, useproenv_id, useproenv_name "
+                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type, user_profile_environment  "
                 + " WHERE user_id = use_id AND acctyp_id = current_access_type_id "
+                + " AND user_profile_environment_id = useproenv_id "
                 + " AND localization_type_id = loctyp_id "
                 + " AND environment_id = env_id AND environment_type_id = envtyp_id  "
                 + " AND environment_id = ? AND use_name = ? ;";
@@ -427,7 +430,7 @@ public class UserDAO {
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
 
                 useEnv.setId(rs.getInt("userenv_id"));
-                useEnv.setImpactFactor(rs.getDouble("useenv_impact_factor"));
+                useEnv.setUserProfile(new UserProfileEnvironment(rs.getInt("useproenv_id"), rs.getString("useproenv_name")));
                 useEnv.setCurrentAccessType(
                         new AccessType(rs.getInt("current_access_type_id"), rs.getString("acctyp_name")));
                 useEnv.setEnvironment(envDAO.get(rs.getInt("environment_id"), false));
@@ -506,10 +509,10 @@ public class UserDAO {
         User temp = null;
         String sql =
                 " SELECT use_name, use_password, use_full_name, current_environment_id, "
-                + " userenv_id,useenv_impact_factor, current_access_type_id, acctyp_name "
-                + " FROM users, user_in_environment, access_type "
+                + " userenv_id,useenv_impact_factor, current_access_type_id, acctyp_name, useproenv_id, useproenv_name "
+                + " FROM users, user_in_environment, access_type, user_profile_environment  "
                 + " WHERE user_id = use_id AND acctyp_id = current_access_type_id "
-                + " AND environment_id = ? AND use_id = ? ;";
+                + " AND user_profile_environment_id = useproenv_id AND environment_id = ? AND use_id = ? ;";
 
         //this.db.connect();
         try {
@@ -535,7 +538,7 @@ public class UserDAO {
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
                 UserEnvironment useEnv = new UserEnvironment();
                 useEnv.setId(rs.getInt("userenv_id"));
-                useEnv.setImpactFactor(rs.getDouble("useenv_impact_factor"));
+                useEnv.setUserProfile(new UserProfileEnvironment(rs.getInt("useproenv_id"), rs.getString("useproenv_name")));
                 useEnv.setCurrentAccessType(
                         new AccessType(rs.getInt("current_access_type_id"), rs.getString("acctyp_name")));
                 useEnv.setEnvironment(temp.getCurrentEnvironment());
