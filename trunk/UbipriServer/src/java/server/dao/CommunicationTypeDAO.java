@@ -206,12 +206,14 @@ public class CommunicationTypeDAO {
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql = " SELECT comtyp_id, comtyp_name " +
-                        " FROM communication_type ";
+                        " FROM communication_type "
+                        + " ORDER BY comtyp_id;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
                 sql = " SELECT comtyp_id, comtyp_name " +
                         " FROM communication_type ORDER BY comtyp_id " +
-                        " LIMIT ? OFFSET ? ;";
+                        " LIMIT ? OFFSET ? "
+                        + " ORDER BY comtyp_id;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(1, limit);
                 pstmt.setInt(2, (begin-1));

@@ -206,12 +206,14 @@ public class EnvironmentTypeDAO {
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql = " SELECT envtyp_id, envtyp_name " +
-                        " FROM environment_type ";
+                        " FROM environment_type "
+                        + " ORDER BY envtyp_id;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
                 sql = " SELECT envtyp_id, envtyp_name " +
                         " FROM environment_type ORDER BY envtyp_id " +
-                        " LIMIT ? OFFSET ? ;";
+                        " LIMIT ? OFFSET ? "
+                        + " ORDER BY envtyp_id;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(1, limit);
                 pstmt.setInt(2, (begin-1));

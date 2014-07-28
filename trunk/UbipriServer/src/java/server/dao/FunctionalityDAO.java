@@ -131,7 +131,7 @@ public class FunctionalityDAO {
      * @return retorna um device
      */
     public Functionality get(int id, boolean allData) {
-        Functionality temp = null;
+        Functionality temp = new Functionality();
         String sql = "";
         
         // se encontrar -1 quer dizer que chegou ao nodo raiz  (recursivamente), retornando nulo
@@ -140,15 +140,15 @@ public class FunctionalityDAO {
         if (allData) {
             // não implementado ainda
             sql =
-                    " SELECT fan_name " +
+                    " SELECT fun_name " +
                     " FROM functionality " +
-                    " WHERE fan_id = ? ;";
+                    " WHERE fun_id = ? ;";
         } else {
 
             sql =
-                    " SELECT fan_name " +
+                    " SELECT fun_name " +
                     " FROM functionality " +
-                    " WHERE fan_id = ? ;";
+                    " WHERE fun_id = ? ;";
         }
         //this.db.connect();
         try {
@@ -206,12 +206,14 @@ public class FunctionalityDAO {
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql = "SELECT fun_id, fun_name " +
-                        " FROM functionality ;";
+                        " FROM functionality "
+                        + " ORDER BY fun_id;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
                 sql = " SELECT fun_id, fun_name " +
                         " FROM functionality ORDER BY fun_id " +
-                        " LIMIT ? OFFSET ? ;";
+                        " LIMIT ? OFFSET ? "
+                        + " ORDER BY fun_id;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(1, limit);
                 pstmt.setInt(2, (begin-1));

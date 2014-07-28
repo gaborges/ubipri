@@ -210,12 +210,14 @@ public class LocalizationTypeDAO {
         try {
             if (all || (begin == -1) || (limit == -1)) {
                 sql = " SELECT loctyp_id,loctyp_name,loctyp_precision,loctyp_metric " +
-                    " FROM localization_type  ;";
+                    " FROM localization_type  "
+                    + " ORDER BY loctyp_id;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
                 sql = " SELECT loctyp_id,loctyp_name,loctyp_precision,loctyp_metric " +
                         " FROM localization_type ORDER BY loctyp_id " +
-                        " LIMIT ? OFFSET ? ;";
+                        " LIMIT ? OFFSET ? "
+                        + " ORDER BY loctyp_id;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(1, limit);
                 pstmt.setInt(2, (begin-1));

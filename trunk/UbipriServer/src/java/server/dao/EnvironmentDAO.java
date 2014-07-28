@@ -65,7 +65,7 @@ public class EnvironmentDAO {
     public void insert(Environment o) {
         String sql =
                 " INSERT INTO environment (env_name,env_latitude,env_longitude,parent_environment_id,"
-                + "localization_type_id,environment_type_id,env_version,env_altitude) VALUES (?,?,?,?,?,?,?,?,?) ;";
+                + "localization_type_id,environment_type_id,env_version,env_altitude,env_operating_range) VALUES (?,?,?,?,?,?,?,?,?) ;";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -77,6 +77,7 @@ public class EnvironmentDAO {
             pstmt.setInt(6, o.getLocalizationType().getId());
             pstmt.setInt(7, o.getVersion());
             pstmt.setDouble(8, o.getAltitude());
+            pstmt.setDouble(9, o.getOperatingRange());
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
@@ -118,10 +119,11 @@ public class EnvironmentDAO {
      */
     public void update(Environment o) {
         String sql =
-                " UPDATE environment SET env_name = ?, env_latitude = ?, enc_longitude = ?, "
+                " UPDATE environment SET env_name = ?, env_latitude = ?, env_longitude = ?, "
                 + " parent_environment_id = ?, localization_type_id = ?, environment_type_id = ?, env_version = ?, env_altitude = ? "
                 + " WHERE env_id = ? ;";
         //this.db.connect();
+        System.out.println("Debug: "+o.toString());
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, o.getName());
@@ -152,28 +154,30 @@ public class EnvironmentDAO {
      * @return retorna um device
      */
     public Environment get(int id, boolean allData) {
-        Environment environment = null;
+        Environment environment = new Environment();
         String sql = "";
 
         // se encontrar -1 quer dizer que chegou ao nodo raiz  (recursivamente), retornando nulo
         if (id == -1) {
-            return null;
+            return new Environment();
         }
 
         if (allData) {
             // não implementado ainda
             sql =
-                    " SELECT env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id,"
+                    " SELECT env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id, env_operating_range,"
                     + " loctyp_name, loctyp_precision, loctyp_metric, environment_type_id, envtyp_name, env_version, env_altitude "
                     + " FROM environment, localization_type, environment_type "
-                    + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id AND env_id = ? ;";
+                    + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id AND env_id = ? "
+                    + " ORDER BY env_id;";
         } else {
 
             sql =
-                    " SELECT env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id,"
+                    " SELECT env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id, env_operating_range,"
                     + " loctyp_name, loctyp_precision, loctyp_metric, environment_type_id, envtyp_name, env_version, env_altitude "
                     + " FROM environment, localization_type,environment_type "
-                    + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id AND env_id = ? ;";
+                    + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id AND env_id = ? "
+                    + " ORDER BY env_id;";
         }
         //this.db.connect();
         try {
@@ -193,6 +197,7 @@ public class EnvironmentDAO {
                 environment.setEnvironmentType(
                         new EnvironmentType(localrs.getInt("environment_type_id"), localrs.getString("envtyp_name")));
                 environment.setParentEnvironment(get(localrs.getInt("parent_environment_id"), false));
+                environment.setOperatingRange(localrs.getDouble("env_operating_range"));
                 environment.setAltitude(localrs.getDouble("env_altitude"));
                 environment.setVersion(localrs.getInt("env_version"));
             }
@@ -249,16 +254,18 @@ public class EnvironmentDAO {
         //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
-                sql = " SELECT env_id, env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id,"
+                sql = " SELECT env_id, env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id, env_operating_range, "
                         + " loctyp_name, loctyp_precision, loctyp_metric, environment_type_id, envtyp_name, env_version, env_altitude "
-                        + " FROM environment, localization_type "
-                        + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id;";
+                        + " FROM environment, localization_type, environment_type "
+                        + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id"
+                        + " ORDER BY env_id;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
-                sql = " SELECT env_id,env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id,"
+                sql = " SELECT env_id,env_name,env_latitude,env_longitude,parent_environment_id,localization_type_id, env_operating_range, "
                         + " loctyp_name, loctyp_precision, loctyp_metric, environment_type_id, envtyp_name, env_version, env_altitude "
-                        + " FROM environment, localization_type "
-                        + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id LIMIT ? OFFSET ?";
+                        + " FROM environment, localization_type, environment_type "
+                        + " WHERE environment_type_id = envtyp_id AND localization_type_id = loctyp_id LIMIT ? OFFSET ?"
+                        + " ORDER BY env_id;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(1, limit);
                 pstmt.setInt(2, (begin - 1));
@@ -278,6 +285,7 @@ public class EnvironmentDAO {
                         rs.getDouble("loctyp_precision"), rs.getString("loctyp_metric")));
                 temp.setEnvironmentType(
                         new EnvironmentType(rs.getInt("environment_type_id"), rs.getString("envtyp_name")));
+                temp.setOperatingRange(rs.getDouble("env_operating_range"));
                 temp.setParentEnvironment(getExclusive(rs.getInt("parent_environment_id"), false));
                 temp.setAltitude(rs.getDouble("env_altitude"));
                 temp.setVersion(rs.getInt("env_version"));

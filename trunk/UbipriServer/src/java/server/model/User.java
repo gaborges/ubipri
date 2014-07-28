@@ -19,6 +19,7 @@ public class User {
     private Environment currentEnvironment;
     private UserEnvironment usersEnvironment; // - Implementar em breve
     private ArrayList<Device> userDevices;
+    private UserType userType;
 
     public User(Integer id, String userName, String password, String fullName) {
         this.id = id;
@@ -100,6 +101,13 @@ public class User {
         this.usersEnvironment = usersEnvironment;
     }
 
+    public UserType getUserType() {
+        return userType;
+    }
+
+    public void setUserType(UserType userType) {
+        this.userType = userType;
+    }
 
     
 }

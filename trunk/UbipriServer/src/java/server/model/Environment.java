@@ -26,6 +26,9 @@ public class Environment {
 
     public Environment() {
     }
+    public Environment(Integer id) {
+        this.id = id;
+    }
 
     public Integer getId() {
         return id;
@@ -122,4 +125,10 @@ public class Environment {
     public void setOperatingRange(Double operatingRange) {
         this.operatingRange = operatingRange;
     }
+    
+    @Override
+    public String toString() {
+        return "Environment{" + "id=" + id + ", name=" + name + ", longitude=" + longitude + ", latitude=" + latitude + ", altitude=" + altitude + ", version=" + version + ", operatingRange=" + operatingRange + ", localizationType=" + localizationType + ", environmentType=" + environmentType + ", parentEnvironment=" + parentEnvironment + ", environmentcustomActions=" + environmentcustomActions + ", environmentPoints=" + environmentPoints + '}';
+    }  
+    
 }
