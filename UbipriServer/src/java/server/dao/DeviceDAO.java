@@ -13,6 +13,7 @@ import server.model.CommunicationType;
 import server.model.Device;
 import server.model.DeviceCommunication;
 import server.model.DeviceType;
+import server.model.Environment;
 import server.model.Functionality;
 import server.model.User;
 import server.util.AccessBD;
@@ -50,9 +51,9 @@ public class DeviceDAO {
     }
 
     /**
-     *  retorna a conexão que está sendo usada pela classe
-     * 
-     * @param @return 
+     * retorna a conexão que está sendo usada pela classe
+     *
+     * @param @return
      */
     public Connection getConnection() {
         return db.getConnection();
@@ -65,8 +66,8 @@ public class DeviceDAO {
      * @return
      */
     public void insert(Device device) {
-        String sql =
-                " INSERT INTO device (dev_code,dev_name,device_type_id,user_id)  VALUES (?,?,?,?) ;";
+        String sql
+                = " INSERT INTO device (dev_code,dev_name,device_type_id,user_id)  VALUES (?,?,?,?) ;";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -77,7 +78,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
@@ -91,8 +92,8 @@ public class DeviceDAO {
      *
      */
     public void delete(Device device) {
-        String sql =
-                " DELETE FROM device WHERE dev_id = ? ; ";
+        String sql
+                = " DELETE FROM device WHERE dev_id = ? ; ";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -100,7 +101,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
@@ -114,8 +115,8 @@ public class DeviceDAO {
      * @return void
      */
     public void update(Device device) {
-        String sql =
-                " UPDATE device SET dev_code = ? , dev_name = ? , device_type_id = ? , user_id = ? "
+        String sql
+                = " UPDATE device SET dev_code = ? , dev_name = ? , device_type_id = ? , user_id = ? "
                 + " WHERE dev_id = ? ; ";
         //this.db.connect();
         try {
@@ -128,7 +129,7 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
@@ -143,19 +144,18 @@ public class DeviceDAO {
      * @return retorna um device
      */
     public Device get(int id, boolean allData) {
-        Device device = null;
-        User user = null;
+        Device device = new Device();
+        User user = new User();
         String sql = "";
         if (allData) {
             // não implementado ainda
-            sql =
-                    " SELECT dev_code,dev_name,device_type_id,user_id,devtyp_name , use_full_name, use_name "
+            sql
+                    = " SELECT dev_code,dev_name,device_type_id,user_id,devtyp_name , use_full_name, use_name "
                     + " FROM device, device_type, users "
                     + " WHERE device_type_id = devtyp_id AND use_id = user_id AND dev_id = ? ;";
         } else {
-
-            sql =
-                    " SELECT dev_code,dev_name,device_type_id,user_id,devtyp_name , use_full_name, use_name "
+            sql
+                    = " SELECT dev_code,dev_name,device_type_id,user_id,devtyp_name , use_full_name, use_name "
                     + " FROM device, device_type, users "
                     + " WHERE device_type_id = devtyp_id AND use_id = user_id AND dev_id = ? ;";
         }
@@ -165,7 +165,7 @@ public class DeviceDAO {
             pstmt.setInt(1, id);
             rs = pstmt.executeQuery();
             if (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
-                // Vai para o próximo retisro, no caso o 1º registro
+                // Vai para o próximo retisro, no caso o 1º registro*/
                 device = new Device();
                 user = new User();
                 device.setId(id); // Seta o ID
@@ -181,12 +181,13 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return device;
     }
-/**
+
+    /**
      * passa-se por parâmetro o device code do dispositivo (não é o ID)
      *
      * @param id a ser retornado, argumento se vão ser necessários todos os
@@ -198,11 +199,11 @@ public class DeviceDAO {
         User user = null;
         String sql = "";
 
-            sql =
-                    " SELECT dev_id, dev_name,device_type_id,user_id,devtyp_name , use_full_name, use_name "
-                    + " FROM device, device_type, users "
-                    + " WHERE device_type_id = devtyp_id AND use_id = user_id AND dev_code = ? ;";
-        
+        sql
+                = " SELECT dev_id, dev_name,device_type_id,user_id,devtyp_name , use_full_name, use_name "
+                + " FROM device, device_type, users "
+                + " WHERE device_type_id = devtyp_id AND use_id = user_id AND dev_code = ? ;";
+
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -225,11 +226,12 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return device;
     }
+
     /**
      * retorna todos os registros cadastrados no banco de dados referentes ao
      * objeto alvo
@@ -242,8 +244,9 @@ public class DeviceDAO {
     }
 
     /**
-     * Retorna os registros cadastrados no banco de dados a partir de parâmetro de paginação.
-     * 
+     * Retorna os registros cadastrados no banco de dados a partir de parâmetro
+     * de paginação.
+     *
      * @param passa-se o índice inicial e o número de elementos a serem
      * retornados
      * @return retorna todos os devices que começam pelo índice Begin até uma
@@ -254,31 +257,36 @@ public class DeviceDAO {
     }
 
     /**
-     * Retorna todos os devices que começam pelo índice Begin até
-     * uma quatidade Limit, método serve de suporte aos outros 2 lists
-     * 
-     * @param @return 
+     * Retorna todos os devices que começam pelo índice Begin até uma quatidade
+     * Limit, método serve de suporte aos outros 2 lists
+     *
+     * @param @return
      */
     private ArrayList<Device> getList(int begin, int limit, boolean all) {
         ArrayList<Device> list = null;
         Device device = null;
         User user = null;
         String sql = "";
+        EnvironmentDAO envDAO = new EnvironmentDAO(db);
 
         //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
-                sql = "SELECT dev_id, dev_code, dev_name, device_type_id, user_id, devtyp_name, use_full_name, use_name "
-                        + " FROM device, device_type, users WHERE device_type_id = devtyp_id AND use_id = user_id ; ";
+                sql = "SELECT dev_id, dev_code, dev_name, device_type_id, user_id, devtyp_name, current_environment_id "
+                        + " FROM device, device_type "
+                        + " WHERE device_type_id = devtyp_id "
+                        + " ORDER BY dev_id;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
-                sql = "SELECT dev_id, dev_code, dev_name, device_type_id, user_id, devtyp_name, use_full_name, use_name "
-                        + " FROM device, device_type, users WHERE device_type_id = devtyp_id AND use_id = user_id LIMIT ? OFFSET ? ;";
+                sql = "SELECT dev_id, dev_code, dev_name, device_type_id, user_id, devtyp_name, current_environment_id "
+                        + " FROM device, device_type "
+                        + " WHERE device_type_id = devtyp_id "
+                        + " LIMIT ? OFFSET ? "
+                        + " ORDER BY env_id;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(1, limit);
-                pstmt.setInt(2, (begin-1));
+                pstmt.setInt(2, (begin - 1));
             }
-            
 
             rs = pstmt.executeQuery();
             list = new ArrayList<Device>();
@@ -291,51 +299,52 @@ public class DeviceDAO {
                 device.setCode(rs.getString("dev_code"));
                 device.setDeviceType(new DeviceType(rs.getInt("device_type_id"), rs.getString("devtyp_name")));
                 user.setId(rs.getInt("user_id"));
-                user.setFullName(rs.getString("use_full_name"));
-                user.setUserName(rs.getString("use_name"));
                 device.setUser(user);
+                device.setCurrentEnvironment(new Environment(rs.getInt("current_environment_id")));
                 device.setDeviceCommunications(getDeviceCommunications(device));
                 list.add(device);
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return list;
     }
-    
+
     /**
-     * retorna todos os devices do usuário cadastrados no banco de dados referentes ao
-     * objeto alvo
+     * retorna todos os devices do usuário cadastrados no banco de dados
+     * referentes ao objeto alvo
      *
      * @param
      * @return
      */
-    public ArrayList<Device> getUserDevices(User user){
-        return getUserDevices(user, -1,-1,false);
+    public ArrayList<Device> getUserDevices(User user) {
+        return getUserDevices(user, -1, -1, false);
     }
-    
+
     /**
-     * Retorna os devices do usuário cadastrados no banco de dados a partir de parâmetro de paginação.
-     * 
+     * Retorna os devices do usuário cadastrados no banco de dados a partir de
+     * parâmetro de paginação.
+     *
      * @param passa-se o índice inicial e o número de elementos a serem
      * retornados
      * @return retorna todos os devices que começam pelo índice Begin até uma
      * quatidade Limit
      */
-    public ArrayList<Device> getUserDevices(User user,int begin, int limit){
-        return getUserDevices(user,begin,limit,true);
+    public ArrayList<Device> getUserDevices(User user, int begin, int limit) {
+        return getUserDevices(user, begin, limit, true);
     }
-    
-     /**
-     * Retorna todos os devices do usuário passado pelo parâmetro que começam pelo índice Begin até
-     * uma quatidade Limit, método serve de suporte aos outros 2 lists
-     * 
-     * @param @return 
+
+    /**
+     * Retorna todos os devices do usuário passado pelo parâmetro que começam
+     * pelo índice Begin até uma quatidade Limit, método serve de suporte aos
+     * outros 2 lists
+     *
+     * @param @return
      */
-    private ArrayList<Device> getUserDevices(User user,int begin, int limit, boolean all) {
+    private ArrayList<Device> getUserDevices(User user, int begin, int limit, boolean all) {
         ArrayList<Device> list = null;
         Device device = null;
         String sql = "";
@@ -343,18 +352,18 @@ public class DeviceDAO {
         //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
-                sql = " SELECT dev_id, dev_code,dev_name, device_type_id, user_id, devtyp_name" +
-                        " FROM device,device_type " +
-                        " WHERE device_type_id = devtyp_id AND user_id = ? ;";
+                sql = " SELECT dev_id, dev_code,dev_name, device_type_id, user_id, devtyp_name"
+                        + " FROM device,device_type "
+                        + " WHERE device_type_id = devtyp_id AND user_id = ? ;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
-                sql = " SELECT dev_id, dev_code,dev_name, device_type_id, user_id, devtyp_name" +
-                        " FROM device,device_type " +
-                        " WHERE device_type_id = devtyp_id AND user_id = ? " +
-                        " LIMIT ? OFFSET ? ;";
+                sql = " SELECT dev_id, dev_code,dev_name, device_type_id, user_id, devtyp_name"
+                        + " FROM device,device_type "
+                        + " WHERE device_type_id = devtyp_id AND user_id = ? "
+                        + " LIMIT ? OFFSET ? ;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(2, limit);
-                pstmt.setInt(3, (begin-1));
+                pstmt.setInt(3, (begin - 1));
             }
             pstmt.setInt(1, user.getId());
 
@@ -374,38 +383,38 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return list;
     }
-    
-    public ArrayList<DeviceCommunication> getDeviceCommunications(Device device){
+
+    public ArrayList<DeviceCommunication> getDeviceCommunications(Device device) {
         DeviceDAO dao = new DeviceDAO();
         return dao.getDeviceCommunications(device.getId());
     }
-    
-    public ArrayList<DeviceCommunication> getDeviceCommunications(int deviceId){
+
+    public ArrayList<DeviceCommunication> getDeviceCommunications(int deviceId) {
         ArrayList<DeviceCommunication> list = null;
         DeviceCommunication comm = null;
-        
+
         //this.db.connect();
         try {
-            
-           String sql = " SELECT devcom_id, devcom_name, devcom_address, devcom_address_format, devcom_port, devcom_preferred_order, "
-                            + " devcom_parameters, communication_type_id, comtyp_name "+
-                        " FROM device_communication, communication_type "+
-                        " WHERE communication_type_id = comtyp_id AND device_id = ? " +
-                        " ORDER BY devcom_preferred_order , devcom_id DESC ;";
 
-           pstmt = getConnection().prepareStatement(sql);
-     
+            String sql = " SELECT devcom_id, devcom_name, devcom_address, devcom_address_format, devcom_port, devcom_preferred_order, "
+                    + " devcom_parameters, communication_type_id, comtyp_name "
+                    + " FROM device_communication, communication_type "
+                    + " WHERE communication_type_id = comtyp_id AND device_id = ? "
+                    + " ORDER BY devcom_preferred_order , devcom_id DESC ;";
+
+            pstmt = getConnection().prepareStatement(sql);
+
             pstmt.setInt(1, deviceId);
 
             rs = pstmt.executeQuery();
 
             list = new ArrayList<DeviceCommunication>();
-            
+
             while (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
                 // Vai para o próximo retisro, no caso o 1º registro
                 comm = new DeviceCommunication();
@@ -421,75 +430,74 @@ public class DeviceDAO {
 
                 list.add(comm);
             }
-            
+
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return list;
     }
-    
-    public ArrayList<Functionality> getDeviceFunctionalities(int deviceId){
+
+    public ArrayList<Functionality> getDeviceFunctionalities(int deviceId) {
         ArrayList<Functionality> list = null;
 
-        
         //this.db.connect();
         try {
-            
-           String sql = " SELECT fun_id, fun_name FROM functionality, device_functionality "+
-                        " WHERE fun_id = functionality_id AND device_id = ? "
-                        + " ORDER BY fun_id ;";
 
-           pstmt = getConnection().prepareStatement(sql);
-     
+            String sql = " SELECT fun_id, fun_name FROM functionality, device_functionality "
+                    + " WHERE fun_id = functionality_id AND device_id = ? "
+                    + " ORDER BY fun_id ;";
+
+            pstmt = getConnection().prepareStatement(sql);
+
             pstmt.setInt(1, deviceId);
 
             rs = pstmt.executeQuery();
 
             list = new ArrayList<Functionality>();
-            
+
             while (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
                 // Vai para o próximo retisro, no caso o 1º registro
-                list.add(new Functionality(rs.getInt("fun_id"),rs.getString("fun_name")));
-                
+                list.add(new Functionality(rs.getInt("fun_id"), rs.getString("fun_name")));
+
             }
-            
+
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return list;
     }
-    
+
     public void updateCurrentEnvironment(Device device) {
         this.updateCurrentEnvironment(device.getCode(), device.getCurrentEnvironment() == null ? -1 : device.getCurrentEnvironment().getId());
     }
-    
-    public void updateCurrentEnvironment(String uniqueDeviceCode,int newEnvironmentId) {
-        String sql =
-                " UPDATE device SET current_environment_id = ? WHERE dev_code = ? ;";
+
+    public void updateCurrentEnvironment(String uniqueDeviceCode, int newEnvironmentId) {
+        String sql
+                = " UPDATE device SET current_environment_id = ? WHERE dev_code = ? ;";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, newEnvironmentId);
-            pstmt.setString(2,uniqueDeviceCode);
+            pstmt.setString(2, uniqueDeviceCode);
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
 
     public boolean isDeviceRegistered(String deviceCode) {
         String sql = " SELECT dev_code "
-                    + " FROM device "
-                    + " WHERE dev_code = ? ;";
-        
+                + " FROM device "
+                + " WHERE dev_code = ? ;";
+
         this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -497,7 +505,7 @@ public class DeviceDAO {
             rs = pstmt.executeQuery();
             if (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
                 // Vai para o próximo retisro, no caso o 1º registro
-                if(rs.getString("dev_code").equals(deviceCode)){
+                if (rs.getString("dev_code").equals(deviceCode)) {
                     rs.close();
                     pstmt.close();
                     //this.db.disconnect();
@@ -507,7 +515,7 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return false;
@@ -515,9 +523,9 @@ public class DeviceDAO {
 
     public boolean hasChangedDeviceEnvironment(String deviceCode, int environmentId) {
         String sql = " SELECT current_environment_id "
-                    + " FROM device "
-                    + " WHERE dev_code = ? ;";
-        
+                + " FROM device "
+                + " WHERE dev_code = ? ;";
+
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -525,7 +533,7 @@ public class DeviceDAO {
             rs = pstmt.executeQuery();
             if (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
                 // Vai para o próximo registro, no caso o 1º registro
-                if(rs.getInt("current_environment_id") != environmentId){
+                if (rs.getInt("current_environment_id") != environmentId) {
                     rs.close();
                     pstmt.close();
                     //this.db.disconnect();
@@ -535,34 +543,34 @@ public class DeviceDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return false;
     }
-    
+
     public boolean onInsertCommunicationCode(Device dev, String communicationCode, int communicationType, int communicationId) {
-        
+
         // Verifica se está especificado o id da comunicação
-        if(communicationId > 0){
+        if (communicationId > 0) {
             // se sim atualiza diretamente a comunicação do dispositivo
             // não implementado
             return true;
-        }    
-            // se não, verifica se o device possui o tipo alvo - GCM
-        if(communicationType == 4 ) // GOOGLE CLOUD MESSAGE
+        }
+        // se não, verifica se o device possui o tipo alvo - GCM
+        if (communicationType == 4) // GOOGLE CLOUD MESSAGE
         {
             // verifica se possui alguma comunicação
-            if(dev.getDeviceCommunications().size() > 0){
+            if (dev.getDeviceCommunications().size() > 0) {
                 // pega o preferido, se não houver preferência pega o primeiro
-                if(dev.getPreferredDeviceCommunication().getCommunicationType().getId() == 4){
-                    this.updateCommunicationCode(dev.getPreferredDeviceCommunication(),communicationCode);
+                if (dev.getPreferredDeviceCommunication().getCommunicationType().getId() == 4) {
+                    this.updateCommunicationCode(dev.getPreferredDeviceCommunication(), communicationCode);
                     return true;
                 } else {
-                    for(DeviceCommunication c : dev.getDeviceCommunications()){
-                        if(c.getCommunicationType().getId() == 4){
+                    for (DeviceCommunication c : dev.getDeviceCommunications()) {
+                        if (c.getCommunicationType().getId() == 4) {
                             // atualiza no banco
-                            this.updateCommunicationCode(c,communicationCode);
+                            this.updateCommunicationCode(c, communicationCode);
                             return true;
                         }
                     }
@@ -572,9 +580,9 @@ public class DeviceDAO {
             DeviceCommunication devcomm = new DeviceCommunication();
             devcomm.setAddress("AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY"); // API Google Gloud Message Bruno
             devcomm.setParameters(communicationCode);
-            devcomm.setName("GCM "+dev.getName());
+            devcomm.setName("GCM " + dev.getName());
             devcomm.setCommunicationType(new CommunicationType(communicationType, "GCM"));
-            this.insertNewCommunicationCode(dev,devcomm);
+            this.insertNewCommunicationCode(dev, devcomm);
         } else {
             System.out.println("Não implementado");
             return false;
@@ -583,24 +591,24 @@ public class DeviceDAO {
     }
 
     private void updateCommunicationCode(DeviceCommunication deviceCommunication, String communicationCode) {
-       String sql =
-                " UPDATE device_communication SET devcom_parameters = ? WHERE devcom_id = ? ;";
+        String sql
+                = " UPDATE device_communication SET devcom_parameters = ? WHERE devcom_id = ? ;";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setString(1, communicationCode);
-            pstmt.setInt(2,deviceCommunication.getId());
+            pstmt.setInt(2, deviceCommunication.getId());
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
 
     private void insertNewCommunicationCode(Device device, DeviceCommunication devcomm) {
-        String sql =
-                "INSERT INTO device_communication (devcom_name,devcom_address,devcom_parameters,communication_type_id,device_id) VALUES (?,?,?,?,?) ;";
+        String sql
+                = "INSERT INTO device_communication (devcom_name,devcom_address,devcom_parameters,communication_type_id,device_id) VALUES (?,?,?,?,?) ;";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -612,24 +620,26 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
 
-    
-     /**
-     * insere no dispositivo as funcionalidades oriundas de um array que possui o ID delas.
+    /**
+     * insere no dispositivo as funcionalidades oriundas de um array que possui
+     * o ID delas.
      *
      * @param
      * @return
      */
     public void insertDeviceFunctionalities(int[] functionalities, Device device) {
-        String sql =
-                " INSERT INTO device_functionality (device_id,functionality_id) VALUES  ";
-        for(int i = 0;i< functionalities.length;i++){
-            sql += "("+device.getId()+","+functionalities[i]+")";
-            if(i < functionalities.length-1) sql += ",";
+        String sql
+                = " INSERT INTO device_functionality (device_id,functionality_id) VALUES  ";
+        for (int i = 0; i < functionalities.length; i++) {
+            sql += "(" + device.getId() + "," + functionalities[i] + ")";
+            if (i < functionalities.length - 1) {
+                sql += ",";
+            }
         }
         sql += ";";
         //this.db.connect();
@@ -638,9 +648,9 @@ public class DeviceDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
-    
+
 }

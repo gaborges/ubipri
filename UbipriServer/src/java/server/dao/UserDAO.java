@@ -14,6 +14,7 @@ import server.model.Environment;
 import server.model.User;
 import server.model.UserEnvironment;
 import server.model.UserProfileEnvironment;
+import server.model.UserType;
 import server.util.AccessBD;
 import server.util.SingleConnection;
 
@@ -61,8 +62,8 @@ public class UserDAO {
      * @return
      */
     public void insert(User o) {
-        String sql =
-                " INSERT INTO users (use_name, use_password, use_full_name) VALUES (?,?,?); ";
+        String sql
+                = " INSERT INTO users (use_name, use_password, use_full_name) VALUES (?,?,?); ";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -86,8 +87,8 @@ public class UserDAO {
      *
      */
     public void delete(User o) {
-        String sql =
-                " DELETE FROM users WHERE use_id = ? ; ";
+        String sql
+                = " DELETE FROM users WHERE use_id = ? ; ";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -95,7 +96,7 @@ public class UserDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
@@ -109,8 +110,8 @@ public class UserDAO {
      * @return void
      */
     public void update(User o) {
-        String sql =
-                " UPDATE users SET use_name = ? , use_password = ? , use_full_name = ? , current_environment_id = ? "
+        String sql
+                = " UPDATE users SET use_name = ? , use_password = ? , use_full_name = ? , current_environment_id = ? , user_type_id = ? "
                 + " WHERE use_id = ? ;";
         //this.db.connect();
         try {
@@ -119,11 +120,12 @@ public class UserDAO {
             pstmt.setString(2, o.getPassword());
             pstmt.setString(3, o.getFullName());
             pstmt.setInt(4, (o.getCurrentEnvironment() == null) ? -1 : o.getCurrentEnvironment().getId()); // se for nulo -1 senão getId
-            pstmt.setInt(5, o.getId());
+            pstmt.setInt(5, o.getUserType().getId());
+            pstmt.setInt(6, o.getId());
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
@@ -135,8 +137,8 @@ public class UserDAO {
      * @return void
      */
     public void updateCurrentEnvironment(User o) {
-        String sql =
-                " UPDATE users SET current_environment_id = ? WHERE use_id = ? ;";
+        String sql
+                = " UPDATE users SET current_environment_id = ? WHERE use_id = ? ;";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -145,23 +147,23 @@ public class UserDAO {
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
-    
-    public void updateCurrentEnvironment(String uniqueUserName,int environmentId) {
-        String sql =
-                " UPDATE users SET current_environment_id = ? WHERE use_name = ? ;";
+
+    public void updateCurrentEnvironment(String uniqueUserName, int environmentId) {
+        String sql
+                = " UPDATE users SET current_environment_id = ? WHERE use_name = ? ;";
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, environmentId);
-            pstmt.setString(2,uniqueUserName);
+            pstmt.setString(2, uniqueUserName);
             pstmt.execute();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
     }
@@ -187,16 +189,16 @@ public class UserDAO {
 
         if (allData) {
             // não implementado ainda
-            sql =
-                    " SELECT use_name, use_password, use_full_name, current_environment_id "
-                    + " FROM users "
-                    + " WHERE use_id = ? ;";
+            sql
+                    = " SELECT use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name "
+                    + " FROM users , user_type"
+                    + " WHERE user_type_id = usetyp_id AND use_id = ? ;";
         } else {
 
-            sql =
-                    " SELECT use_name, use_password, use_full_name, current_environment_id "
-                    + " FROM users "
-                    + " WHERE use_id = ? ;";
+            sql
+                    = " SELECT use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name"
+                    + " FROM users , user_type "
+                    + " WHERE user_type_id = usetyp_id AND use_id = ? ;";
         }
         //this.db.connect();
         try {
@@ -213,11 +215,13 @@ public class UserDAO {
                 temp.setPassword(rs.getString("use_password"));
                 temp.setFullName(rs.getString("use_full_name"));
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
+                temp.setUserType(
+                        new UserType(rs.getInt("user_type_id"), rs.getString("usetyp_name")));
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return temp;
@@ -229,16 +233,16 @@ public class UserDAO {
 
         if (allData) {
             // não implementado ainda
-            sql =
-                    " SELECT use_id,use_name, use_password, use_full_name, current_environment_id "
-                    + " FROM users "
-                    + " WHERE use_name = ? ;";
+            sql
+                    = " SELECT use_id,use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name "
+                    + " FROM users, user_type "
+                    + " WHERE user_type_id = usetyp_id AND use_name = ? ;";
         } else {
 
-            sql =
-                    " SELECT use_id,use_name, use_password, use_full_name, current_environment_id "
-                    + " FROM users "
-                    + " WHERE use_name = ? ;";
+            sql
+                    = " SELECT use_id,use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name "
+                    + " FROM users, user_type "
+                    + " WHERE user_type_id = usetyp_id AND use_name = ? ;";
         }
         //this.db.connect();
         try {
@@ -255,11 +259,13 @@ public class UserDAO {
                 temp.setPassword(rs.getString("use_password"));
                 temp.setFullName(rs.getString("use_full_name"));
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
+                temp.setUserType(
+                        new UserType(rs.getInt("user_type_id"), rs.getString("usetyp_name")));
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return temp;
@@ -298,18 +304,22 @@ public class UserDAO {
      */
     private ArrayList<User> getList(int begin, int limit, boolean all) {
         ArrayList<User> list = null;
-        User temp = null;
+        User temp = new User();
         String sql = "";
 
         //this.db.connect();
         try {
             if (all || (begin == -1) || (limit == -1)) {
-                sql = "SELECT use_id, use_name, use_password, use_full_name, current_environment_id "
-                        + " FROM users ;";
+                sql = "SELECT use_id, use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name "
+                        + " FROM users, user_type  "
+                        + " WHERE user_type_id = usetyp_id "
+                        + " ORDER BY use_id;";
                 pstmt = getConnection().prepareStatement(sql);
             } else {
-                sql = " SELECT use_id, use_name, use_password, use_full_name, current_environment_id "
-                        + " FROM users ORDER BY use_id "
+                sql = " SELECT use_id, use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name "
+                        + " FROM users, user_type  ORDER BY use_id "
+                        + " WHERE user_type_id = usetyp_id "
+                        + " ORDER BY use_id"
                         + " LIMIT ? OFFSET ? ;";
                 pstmt = getConnection().prepareStatement(sql);
                 pstmt.setInt(1, limit);
@@ -328,13 +338,15 @@ public class UserDAO {
                 temp.setPassword(rs.getString("use_password"));
                 temp.setFullName(rs.getString("use_full_name"));
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
+                temp.setUserType(
+                        new UserType(rs.getInt("user_type_id"), rs.getString("usetyp_name")));
 
                 list.add(temp);
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return list;
@@ -352,13 +364,14 @@ public class UserDAO {
      */
     public User getUserEnvironment(int userId, int environmentId) {
         User temp = null;
-        String sql =
-                " SELECT use_name, use_password, use_full_name, current_environment_id, "
+        String sql
+                = " SELECT use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name, "
                 + " userenv_id,useenv_impact_factor, current_access_type_id, acctyp_name, "
                 + " env_id, env_name, env_latitude, env_longitude, localization_type_id, "
                 + " loctyp_name, loctyp_precision, loctyp_metric, useproenv_id, useproenv_name "
-                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type, user_profile_environment "
+                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type, user_profile_environment, user_type "
                 + " WHERE user_id = use_id AND acctyp_id = current_access_type_id "
+                + " AND user_type_id = usetyp_id "
                 + " AND user_profile_environment_id = useproenv_id "
                 + " AND localization_type_id = loctyp_id "
                 + " AND environment_id = env_id AND environment_type_id = envtyp_id  "
@@ -381,6 +394,8 @@ public class UserDAO {
                 temp.setPassword(rs.getString("use_password"));
                 temp.setFullName(rs.getString("use_full_name"));
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
+                temp.setUserType(
+                        new UserType(rs.getInt("user_type_id"), rs.getString("usetyp_name")));
 
                 useEnv.setId(rs.getInt("userenv_id"));
                 useEnv.setUserProfile(new UserProfileEnvironment(rs.getInt("useproenv_id"), rs.getString("useproenv_name")));
@@ -392,20 +407,22 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return temp;
     }
+
     public User getUserEnvironment(String userName, int environmentId) {
         User temp = null;
-        String sql =
-                " SELECT use_id, use_password, use_full_name, current_environment_id, environment_id, "
+        String sql
+                = " SELECT use_id, use_password, use_full_name, current_environment_id, environment_id, user_type_id, usetyp_name, "
                 + " userenv_id,useenv_impact_factor, current_access_type_id, acctyp_name, "
                 + " env_id, env_name, env_latitude, env_longitude, localization_type_id, "
                 + " loctyp_name, loctyp_precision, loctyp_metric, useproenv_id, useproenv_name "
-                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type, user_profile_environment  "
+                + " FROM users, user_in_environment, access_type, environment, environment_type, localization_type, user_profile_environment, user_type  "
                 + " WHERE user_id = use_id AND acctyp_id = current_access_type_id "
+                + " AND user_type_id = usetyp_id "
                 + " AND user_profile_environment_id = useproenv_id "
                 + " AND localization_type_id = loctyp_id "
                 + " AND environment_id = env_id AND environment_type_id = envtyp_id  "
@@ -428,6 +445,8 @@ public class UserDAO {
                 temp.setPassword(rs.getString("use_password"));
                 temp.setFullName(rs.getString("use_full_name"));
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
+                temp.setUserType(
+                        new UserType(rs.getInt("user_type_id"), rs.getString("usetyp_name")));
 
                 useEnv.setId(rs.getInt("userenv_id"));
                 useEnv.setUserProfile(new UserProfileEnvironment(rs.getInt("useproenv_id"), rs.getString("useproenv_name")));
@@ -439,18 +458,18 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return temp;
     }
-    
-    public boolean hasAccessPermission(String userName, String userPassword){
-        String sql =
-                    " SELECT use_name, use_password "
-                    + " FROM users "
-                    + " WHERE use_name = ? AND use_password = ? ;";
-       
+
+    public boolean hasAccessPermission(String userName, String userPassword) {
+        String sql
+                = " SELECT use_name, use_password "
+                + " FROM users "
+                + " WHERE use_name = ? AND use_password = ? ;";
+
         this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -460,27 +479,27 @@ public class UserDAO {
 
             if (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
                 // Vai para o próximo retisro, no caso o 1º registro
-                if(userName.equals(rs.getString("use_name")) && userPassword.equals(rs.getString("use_password"))) {
+                if (userName.equals(rs.getString("use_name")) && userPassword.equals(rs.getString("use_password"))) {
                     rs.close();
                     pstmt.close();
                     //this.db.disconnect();
                     return true;
-                }                 
+                }
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return false;
     }
-    
-    public boolean hasChangedUserEnvironment(String userName, int environmentId){
+
+    public boolean hasChangedUserEnvironment(String userName, int environmentId) {
         String sql = " SELECT current_environment_id "
-                    + " FROM users "
-                    + " WHERE use_name = ? ;";
-       
+                + " FROM users "
+                + " WHERE use_name = ? ;";
+
         //this.db.connect();
         try {
             pstmt = getConnection().prepareStatement(sql);
@@ -489,17 +508,17 @@ public class UserDAO {
 
             if (rs.next()) { // se retornou um número maior que 0 estão existe alguém que possui esse código
                 // Verifica se o ambiente continua o mesmo
-                if(environmentId != rs.getInt("current_environment_id")) {
+                if (environmentId != rs.getInt("current_environment_id")) {
                     rs.close();
                     pstmt.close();
                     //this.db.disconnect();
                     return true;
-                }                 
+                }
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return false;
@@ -507,11 +526,12 @@ public class UserDAO {
 
     public User getUserAfterUpdateUserEnvironment(int userId, int newEnvironmentId) {
         User temp = null;
-        String sql =
-                " SELECT use_name, use_password, use_full_name, current_environment_id, "
+        String sql
+                = " SELECT use_name, use_password, use_full_name, current_environment_id, user_type_id, usetyp_name,"
                 + " userenv_id,useenv_impact_factor, current_access_type_id, acctyp_name, useproenv_id, useproenv_name "
-                + " FROM users, user_in_environment, access_type, user_profile_environment  "
+                + " FROM users, user_in_environment, access_type, user_profile_environment, user_type "
                 + " WHERE user_id = use_id AND acctyp_id = current_access_type_id "
+                + " AND user_type_id = usetyp_id "
                 + " AND user_profile_environment_id = useproenv_id AND environment_id = ? AND use_id = ? ;";
 
         //this.db.connect();
@@ -519,11 +539,10 @@ public class UserDAO {
             temp = new User();
             temp.setId(userId); // Seta o ID
             temp.setCurrentEnvironment(new Environment());
-            EnvironmentDAO envDAO = new EnvironmentDAO(db);  
+            EnvironmentDAO envDAO = new EnvironmentDAO(db);
             temp.getCurrentEnvironment().setId(newEnvironmentId);
             updateCurrentEnvironment(temp);
-            
-            
+
             pstmt = getConnection().prepareStatement(sql);
             pstmt.setInt(1, userId);
             pstmt.setInt(2, newEnvironmentId);
@@ -536,6 +555,9 @@ public class UserDAO {
                 temp.setPassword(rs.getString("use_password"));
                 temp.setFullName(rs.getString("use_full_name"));
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("current_environment_id"), false));
+                temp.setUserType(
+                        new UserType(rs.getInt("user_type_id"), rs.getString("usetyp_name")));
+
                 UserEnvironment useEnv = new UserEnvironment();
                 useEnv.setId(rs.getInt("userenv_id"));
                 useEnv.setUserProfile(new UserProfileEnvironment(rs.getInt("useproenv_id"), rs.getString("useproenv_name")));
@@ -547,18 +569,18 @@ public class UserDAO {
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
         return temp;
     }
-    
+
     public User getUserByDeviceCode(String deviceCode) {
         User temp = null;
-        String sql =
-                " SELECT use_id,use_name, use_password, use_full_name, users.current_environment_id AS cur_env_id "
-                + " FROM users, device "
-                + " WHERE user_id = use_id AND dev_code = ? ;";
+        String sql
+                = " SELECT use_id,use_name, use_password, use_full_name, user_type_id, usetyp_name , users.current_environment_id AS cur_env_id "
+                + " FROM users, device, user_type  "
+                + " WHERE user_type_id = usetyp_id AND user_id = use_id AND dev_code = ? ;";
 
         //this.db.connect();
         try {
@@ -575,13 +597,15 @@ public class UserDAO {
                 temp.setPassword(rs.getString("use_password"));
                 temp.setFullName(rs.getString("use_full_name"));
                 temp.setCurrentEnvironment(envDAO.get(rs.getInt("cur_env_id"), false));
+                temp.setUserType(
+                        new UserType(rs.getInt("user_type_id"), rs.getString("usetyp_name")));
             }
             rs.close();
             pstmt.close();
         } catch (SQLException e) {
-            System.out.println("Class: " + this.toString()+". Exception: "+e);
+            System.out.println("Class: " + this.toString() + ". Exception: " + e);
         }
         //this.db.disconnect();
-        return temp; 
+        return temp;
     }
 }

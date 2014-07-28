@@ -9,18 +9,28 @@
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Management Ubipri Server</title>
+        <link rel="stylesheet" type="text/css" media="screen" href="style.css" />
+        <title>Ubipri Server Management</title>
     </head>
     <body>
-        <h1>Menu</h1>
+        <div class="container">
+        <h1 class="titulo">Ubipri</h1>
         <ul>
-            <li><a href="user/">Users</a></li>
-            <li><a href="#">Devices</a></li>
-            <li><a href="functionality/">Functionalities</a></li>
-            <li><a href="#">Environment</a></li>
-            <li><a href="localization_type/">Localization Types</a></li>
-            <li><a href="environment_type/">Environment Types</a></li>
-            <li><a href="#">Logs</a></li>
+            <li><a href="user/list.jsp">Users</a></li>
+            <li><a href="device/list.jsp">Devices</a></li>
+            <li><a href="functionality/list.jsp">Functionalities</a></li>
+            <li><a href="environment/list.jsp">Environment</a></li>
+            <li><a href="localization_type/list.jsp">Localization Types</a></li>
+            <li><a href="environment_type/list.jsp">Environment Types</a></li>
+            <li><a href="communication_type/list.jsp">Communication Types</a></li>
+            <li><a href="device_communication/list.jsp">Devices Communications</a></li>
+            <li><a href="device_functionality/list.jsp">Devices Functionalities</a></li>
+            <li><a href="device_type/list.jsp">Devices Types</a></li>
+            <li><a href="point/list.jsp">Points</a></li> 
+            <li><a href="user_profile_environment/list.jsp">User Profile Environment</a></li>
+            <li><a href="log_event/list.jsp">Log Event</a></li> 
+            <li><a href="user_type/list.jsp">User Type</a></li> 
         </ul>
+        </div>
     </body>
 </html>

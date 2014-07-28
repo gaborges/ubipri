@@ -22,6 +22,15 @@ public class Point {
     private double longitude;
     private double altitude;
     private double order;
+    private Environment environment;
+
+    public Point(double latitude, double longitude, double altitude, double order, Environment environment) {
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.altitude = altitude;
+        this.order = order;
+        this.environment = environment;
+    }
 
     public Point() {
     }
@@ -64,6 +73,14 @@ public class Point {
 
     public void setOrder(double order) {
         this.order = order;
+    }
+    
+    public Environment getEnvironment() {
+        return environment;
+    }
+
+    public void setEnvironment(Environment environment) {
+        this.environment = environment;
     }
     
 }

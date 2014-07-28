@@ -18,6 +18,10 @@ public class LocalizationType {
         this.id = id;
         this.name = name;
     }
+    
+    public LocalizationType(Integer id) {
+        this.id = id;
+    }
 
     public LocalizationType(Integer id, String name, Double precision, String metric) {
         this.id = id;

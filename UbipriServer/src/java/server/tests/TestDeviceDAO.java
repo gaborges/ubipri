@@ -55,7 +55,7 @@ public class TestDeviceDAO {
         Device d = dao.get(2, false);
         System.out.println("Chegou aki 66");
         System.out.println("ID: "+d.getId()+" Nome: "+d.getName()+" Code: "+d.getCode()+" User: "+d.getUser().getUserName()
-                + " DeviceType: "+ d.getDeviceType().getNome() + " Num Communications: "
+                + " DeviceType: "+ d.getDeviceType().getName() + " Num Communications: "
                 +  (d.getDeviceCommunications() == null ? 0 : d.getDeviceCommunications().size()));
     }
 
@@ -63,7 +63,7 @@ public class TestDeviceDAO {
         ArrayList<Device> list =  dao.getList();
         for(Device d :list) {
             System.out.println("ID: "+d.getId()+" Nome: "+d.getName()+" Code: "+d.getCode()+" User: "+d.getUser().getUserName()
-                + " DeviceType: "+ d.getDeviceType().getNome()+ " Num Communications: "
+                + " DeviceType: "+ d.getDeviceType().getName()+ " Num Communications: "
                 +  d.getDeviceCommunications().size());
         }
     }
@@ -72,7 +72,7 @@ public class TestDeviceDAO {
         ArrayList<Device> list =  dao.getList(1,3);
         for(Device d :list) {
             System.out.println("ID: "+d.getId()+" Nome: "+d.getName()+" Code: "+d.getCode()+" User: "+d.getUser().getUserName()
-                + " DeviceType: "+ d.getDeviceType().getNome());
+                + " DeviceType: "+ d.getDeviceType().getName());
         }
          
     }

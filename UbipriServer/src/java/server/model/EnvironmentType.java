@@ -19,6 +19,12 @@ public class EnvironmentType {
         this();
         this.name = name;
     }
+    
+    public EnvironmentType(Integer id) {
+        this();
+        this.id = id;
+    }
+
 
     public EnvironmentType(Integer id, String name) {
         this();
