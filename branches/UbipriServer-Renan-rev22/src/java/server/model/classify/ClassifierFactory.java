@@ -17,8 +17,8 @@ public class ClassifierFactory {
             case "NNge":
                 // Implementar
                 break;
-            case "RadomTree":
-                // Implementar
+            case "RandomTree":
+                result = new ClassifierDecisionTree();
                 break;
             case "MultilayerPerceptron":
                 // Implementar
