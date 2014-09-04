@@ -12,9 +12,12 @@ package server.model;
  */
 public class UserProfileEnvironment {
     /*  Automatically classified IDs of the Default User Profiles in Environment */
-    public static final Integer UNKNOW = 1;
-    public static final Integer TRANSIENT = 2;
-    public static final Integer USER = 3;
+    public final static String UNKNOWN = "Unknown";
+    public final static String TRANSIENT = "Transient";
+    public final static String USER = "User"; 
+    public final static String RESPONSIBLE = "Responsible"; 
+    public final static String STUDENT = "Student"; 
+    public final static String MANAGER = "Manager";
         
     private Integer id;
     private String name;

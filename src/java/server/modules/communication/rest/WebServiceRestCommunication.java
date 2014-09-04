@@ -49,7 +49,7 @@ public class WebServiceRestCommunication {
     @Produces("application/json")
     public String getJson() {
         //TODO return proper representation object
-        return "{hello:world}";
+        return "{\"hello\":\"world\"}";
     }
 
     /**

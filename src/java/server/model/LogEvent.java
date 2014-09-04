@@ -134,32 +134,34 @@ public class LogEvent {
         this.workday = workday;
     }
     
-    public LogEvent setTimeVariables(LogEvent event, Date now){
-        event.setTime(now);
-        event.setShift(calculateShift(now));
-        event.setWeekday(calculateWeekday(now));
-        event.setWorkday(calculateWorkday(now));
-        return event;
+    public void setTimeVariables(Date now){
+        this.setTime(now);
+        this.setShift(calculateShift(now));
+        this.setWeekday(calculateWeekday(now));
+        this.setWorkday(calculateWorkday(now));
     }
     
     private char calculateShift(Date now){
         // Função para culcular
         
         // retornar LogEvent.DAY_SHIFT ou LogEvent.NIGHT_SHIFT
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return LogEvent.DAY_SHIFT;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private char calculateWorkday(Date now){
         // Função para culcular
         
         // retornar LogEvent.YES_WORKDAY ou LogEvent.NOT_WORKDAY
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        return LogEvent.YES_WORKDAY;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 
     private Integer calculateWeekday(Date now) {
         // Função para culcular
         
-        // retornar LogEvent.YES_WORKDAY ou LogEvent.NOT_WORKDAY
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        // retornar LogEvent.DAY_OF_WEEK ou LogEvent.DAY_OF_WEEKEND
+        return LogEvent.DAY_OF_WEEK;
+        //throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
 }

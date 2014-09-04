@@ -146,9 +146,10 @@ public class PrivacyControlUbiquitous {
         boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
         boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
         // Caso nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente, retorna OK;
-        if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
-            return "{\"status\":\"OK\"}";
-        }
+        //if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
+            //return "{\"status\":\"OK\"}";
+        //} TODO: apenas para testar
+        
         // Verifica se o usuário continua no mesmo ambiente, se não atualiza a localização
         if (hasChandedUserLocation) {
             this.updateUserEnvironment(userName, environmentId); // em breve fazer mensagens dinâmicas (Existem protocolocos Diferentes)
@@ -163,17 +164,16 @@ public class PrivacyControlUbiquitous {
         dev.setListFunctionalities(devDAO.getDeviceFunctionalities(dev.getId()));
         // Busca Tipo de ambiente e o tipo de acesso do usuário no ambiente;
         User user = this.userDAO.getUserEnvironment(userName, environmentId);
+        
         // Cria e salva Log de acesso (Contexto de Localização);
         LogEvent eve = new LogEvent();
         eve.setDevice(dev);
-        eve.setTimeVariables(eve,new Date());
-        eve.setShift(Character.MIN_VALUE); //
-        eve.setWeekday(environmentId);
-        eve.setWorkday(Character.MIN_VALUE);
+        eve.setTimeVariables(new Date());
         eve.setEnvironment(user.getUsersEnvironment().getEnvironment());
         eve.setEvent((exiting)? "Leaving the location":"Entering the location");
         eve.setUser(user);
         envDAO.insertLog(eve); /// Terminar de alterar
+        
         // Função de Busca de ações
         // Busca Tipo de ambiente
         // Busca Busca o tipo de acesso do usuário no ambiente
@@ -285,8 +285,10 @@ public class PrivacyControlUbiquitous {
 
     private ArrayList<Action> getListActions(User userEnvironment, Device device, LogEvent event) {
         int i, j;
+        
         // Gera o classificador
-        Classifier classifier = ClassifierFactory.create("NotImplemented"); // Não implementado
+        Classifier classifier = ClassifierFactory.create("RandomTree"); // Não implementado
+        
         // Classifica o tipo de acesso baseado nos 5 parâmetros (Profile,Tipo de Ambiente,Turno,Dia útil, Dia de semana)
         AccessType accessTypeClassified  = classifier.classify(
                 userEnvironment.getUsersEnvironment().getUserProfile(), // Tipo de Profile: 1;"Unknown" 2;"Transient" 3;"User" 4;"Responsible" 5;"Student" 6;"Manager"
@@ -299,6 +301,7 @@ public class PrivacyControlUbiquitous {
         AccessLevel accessLevel = this.accLevDAO.get( //
                 userEnvironment.getUsersEnvironment().getEnvironment().getEnvironmentType(),
                 accessTypeClassified); // old: userEnvironment.getUsersEnvironment().getCurrentAccessType()
+        
         // Busca ações customizadas
         ArrayList<Action> finalActions = new ArrayList<Action>(),
                 customActions = this.actDAO.getCustomActions(

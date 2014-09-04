@@ -9,6 +9,11 @@ package server.model;
  * @author Estudo
  */
 public class EnvironmentType {
+    
+    public final static String PRIVATE = "Private";
+    public final static String PUBLIC = "Public";
+    public final static String BLOCKED = "Blocked";
+    
     private Integer id;
     private String name;
 
