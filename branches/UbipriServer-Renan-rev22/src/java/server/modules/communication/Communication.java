@@ -88,7 +88,7 @@ public class Communication {
     }
     
     private Message.Builder makeGoogleCloudMessage(ArrayList<Action> actions, Environment environment,Boolean exitingEnvironment) {
-        String json ;
+        String json = "";
         Message.Builder builder = new Message.Builder();
         // Adiciona o id do ambiente alvo
         builder.addData("environment", String.valueOf(environment.getId()));
@@ -170,6 +170,8 @@ public class Communication {
             } 
             //System.out.println("functionality_id: "+actions.get(i).getFunctionality().getId()+"JSON: "+json);
         }
+        System.out.println("MENSAGEM JSON A SER ENVIADA POR GCM: " + json);
+        
         return builder;
     }
     
@@ -178,7 +180,7 @@ public class Communication {
         return this.ubiPri.validateRemoteLoginUser(userName, userPassword, deviceCode);
     }
 
-    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId, String deviceName, int[] functionalities) {
+    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId, String deviceName, ArrayList functionalities) {
         ubiPri.setCommunication(this);
         return this.ubiPri.onInsertNewCommunicationCode(
                 userName,
