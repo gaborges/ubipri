@@ -9,6 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import org.eclipse.jdt.internal.compiler.ast.ForeachStatement;
 import server.model.CommunicationType;
 import server.model.Device;
 import server.model.DeviceCommunication;
@@ -570,7 +571,8 @@ public class DeviceDAO {
             }
             // se não possui nenhum, cria uma nova e adiciona como preferido
             DeviceCommunication devcomm = new DeviceCommunication();
-            devcomm.setAddress("AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY"); // API Google Gloud Message Bruno
+            //devcomm.setAddress("AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY"); // API Google Gloud Message Bruno
+            devcomm.setAddress("AIzaSyC7-b9cg3-TR1T3e6XnUk9F2xc7mdcxDTo"); // API Google Gloud Message Renan
             devcomm.setParameters(communicationCode);
             devcomm.setName("GCM "+dev.getName());
             devcomm.setCommunicationType(new CommunicationType(communicationType, "GCM"));
@@ -624,13 +626,16 @@ public class DeviceDAO {
      * @param
      * @return
      */
-    public void insertDeviceFunctionalities(int[] functionalities, Device device) {
+    public void insertDeviceFunctionalities(ArrayList functionalities, Device device) {
         String sql =
                 " INSERT INTO device_functionality (device_id,functionality_id) VALUES  ";
-        for(int i = 0;i< functionalities.length;i++){
-            sql += "("+device.getId()+","+functionalities[i]+")";
-            if(i < functionalities.length-1) sql += ",";
+        
+        for(int i = 0; i< functionalities.size(); i++){
+            
+            sql += "("+device.getId()+","+functionalities.get(i)+")";
+            if(i < functionalities.size()-1) sql += ",";
         }
+        
         sql += ";";
         //this.db.connect();
         try {

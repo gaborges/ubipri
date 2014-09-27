@@ -18,14 +18,15 @@ import server.model.Action;
  */
 public class GoogleCloudMessageCommunication {
     
-      // é preciso criar um projeto no Google APIs e gerar uma key pra usar o Cloud Messaging. Essa é a key do projeto que criei
-    private static String apiKey = "AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY";
+    // é preciso criar um projeto no Google APIs e gerar uma key pra usar o Cloud Messaging. Essa é a key do projeto que criei
+    //private static String apiKey = "AIzaSyDAVL0xUjF4i0k0FhpzZA4owWsUdBNPySY";
+    private static String apiKey = "AIzaSyC7-b9cg3-TR1T3e6XnUk9F2xc7mdcxDTo";
     private String cloudApiKey = "";
     private Sender sender;
     private Result result = null;
     // Essa é a key do device. Ele é registrado no projeto que criei, recebe essa key e vai mandar pro servidor na hora de registrar, junto com usuário, senha, ID do dispositivo e o que mais precisar
-    String device = "APA91bFj1Di-hnTprql9BfB5ipJxJxOdpYzbch2VlO4be81RjzUg7blak5rEtd_LVEzg5wr2WQ4dIcXSxHVyhv1H_yXUj7m8SklE8qUxSeqsjJCTzOsUrgk0MJKzZ6TXpOFdIoaDTqc2thzWnMhsqIbZ_7TEPrtLIQ";
-
+    //String device = "APA91bFj1Di-hnTprql9BfB5ipJxJxOdpYzbch2VlO4be81RjzUg7blak5rEtd_LVEzg5wr2WQ4dIcXSxHVyhv1H_yXUj7m8SklE8qUxSeqsjJCTzOsUrgk0MJKzZ6TXpOFdIoaDTqc2thzWnMhsqIbZ_7TEPrtLIQ";
+    String device = "APA91bHQX99yo-9cwsM_3hSZtlM3nIF8xr7K3FrImjeH0xfecgE4hJ5SrgkXXA70jWqyHj68z6m-FZdk7ASFWeQsTykyNQAUcXVW3TVZvqfbIQbB3gjYnnovxymtpBu2vlojtbOBCoKb7My82VjAkVZc3vEad7KXd_5JuThsaW6y_UQoz36WkNUqoa-ad0JhJ9kn2C1X0rAz";
 
     /*
      *
@@ -58,12 +59,15 @@ public class GoogleCloudMessageCommunication {
     }
     
     public boolean send(String deviceKey,Message.Builder build){
-        if(sender == null) sender = (!this.cloudApiKey.equals("")) ? new Sender(cloudApiKey) : new Sender(apiKey);
+        if(sender == null) {
+            sender = (!this.cloudApiKey.equals("")) ? new Sender(cloudApiKey)
+                                                    : new Sender(apiKey);
+        }
         
         build.delayWhileIdle(true);
         
         Message message = build.build();
-        System.out.println("Message GCM: "+message.toString());
+        System.out.println("MESSAGE PARA GCM: "+message.toString());
         try {
             // envia a mensagem, 5 retries
             result = sender.send(message, device, 5);
@@ -94,7 +98,7 @@ public class GoogleCloudMessageCommunication {
         
         sender = new Sender(apiKey);
         // A mensagem é um conjunto de key-values
-    Message message = new Message.Builder()
+        Message message = new Message.Builder()
             .delayWhileIdle(true) // Wait for device to become active before sending.
             .addData("WIFI_STATE", "OFF")
             .addData("SILENT_MODE_STATE", "ON")

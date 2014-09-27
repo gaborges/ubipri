@@ -100,7 +100,7 @@ public class PrivacyControlUbiquitous {
         // Cria e salva Log de acesso (Contexto de Localização);
         LogEvent eve = new LogEvent();
         eve.setDevice(dev);
-        eve.setTime(new Date());
+        eve.setTimeVariables(new Date());
         eve.setEnvironment(user.getUsersEnvironment().getEnvironment());
         eve.setEvent((exiting)? "Leaving the location":"Entering the location");
         eve.setUser(user);
@@ -146,9 +146,9 @@ public class PrivacyControlUbiquitous {
         boolean hasChandedUserLocation = this.hasChangedUserEnvironment(userName, environmentId);
         boolean hasChangedDeviceLocation = this.hasChangedDeviceEnvironment(deviceCode, environmentId);
         // Caso nem o dispositivo nem o usuário mudaram de localização então não é necessário seguir em frente, retorna OK;
-        //if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
-            //return "{\"status\":\"OK\"}";
-        //} TODO: apenas para testar
+        if (!hasChandedUserLocation && !hasChangedDeviceLocation) {
+            return "{\"status\":\"OK\"}";
+        }
         
         // Verifica se o usuário continua no mesmo ambiente, se não atualiza a localização
         if (hasChandedUserLocation) {
@@ -287,7 +287,7 @@ public class PrivacyControlUbiquitous {
         int i, j;
         
         // Gera o classificador
-        Classifier classifier = ClassifierFactory.create("RandomTree"); // Não implementado
+        Classifier classifier = ClassifierFactory.create("RandomTree"); // Não implementado (já sim...)
         
         // Classifica o tipo de acesso baseado nos 5 parâmetros (Profile,Tipo de Ambiente,Turno,Dia útil, Dia de semana)
         AccessType accessTypeClassified  = classifier.classify(
@@ -373,7 +373,7 @@ public class PrivacyControlUbiquitous {
         return this.devDAO.hasChangedDeviceEnvironment(deviceCode, environmentId);
     }
 
-    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId,String deviceName,int[] functionalities) {
+    public String onInsertNewCommunicationCode(String userName, String userPassword, String deviceCode, String communicationCode, int communicationType, int communicationId,String deviceName,ArrayList functionalities) {
         Device device = null;
         // Verifica login e senha do usuário, se sim retorna o status OK e continua senão retorna Status DENY 
         if (!this.userHasAccessPermission(userName, userPassword)) {
@@ -391,7 +391,7 @@ public class PrivacyControlUbiquitous {
             device = this.devDAO.get(deviceCode);
             // Insere as funcionalidades do dispositivo, caso possua
             if(functionalities != null)
-                if(functionalities.length > 0)
+                if(functionalities.size() > 0)
                     this.devDAO.insertDeviceFunctionalities(functionalities, device);            
         }  else {
              // Busca o dispositivo
