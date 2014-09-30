@@ -21,6 +21,7 @@
             <li><a href="localization_type/">Localization Types</a></li>
             <li><a href="environment_type/">Environment Types</a></li>
             <li><a href="#">Logs</a></li>
+            <li><a href="map/">Map</a></li>
         </ul>
     </body>
 </html>
