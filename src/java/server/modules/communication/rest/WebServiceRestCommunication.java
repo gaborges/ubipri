@@ -15,6 +15,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
+import server.modules.application.gcalendar.Configuration;
 import server.modules.communication.Communication;
 import server.modules.communication.GetEnvironmentParameters;
 import server.modules.communication.InsertCommunicationCodeParameters;
@@ -311,4 +312,90 @@ public class WebServiceRestCommunication {
      * @return Status of the operation in the Server. Return Message Format:
      * {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
+    
+    @POST
+    @Path("/test/calendar")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String testCalendar() {
+        
+        Configuration calendar = new Configuration();
+        
+        String result;
+        
+        try {
+            if (calendar.setup()) {
+                result = "created";
+            } else {
+                result = "ready";
+            }
+        } catch (Exception e) {
+            result = "exception - " + e.getMessage();
+        }
+        
+        String calendarId = "";
+        
+        if (result.equalsIgnoreCase("created") || result.equalsIgnoreCase("ready")) {
+            
+            try {
+                calendarId =  calendar.createCalendar();
+            } catch (Exception e2) {
+                calendarId = "exception - " + e2.getMessage();
+            }
+        }
+        
+        String ruleId = "";
+        
+        if (!calendarId.isEmpty() && !calendarId.startsWith("exception")) {
+            
+            try {
+                ruleId = calendar.shareCalendar(calendarId);
+            } catch (Exception e3) {
+                ruleId = "exception - " + e3.getMessage();
+            }
+        }
+        
+        return "{"
+                + "\"result1\":\"" + result + "\","
+                + "\"result2\":\"" + calendarId + "\","
+                + "\"result3\":\"" + ruleId + "\","
+                + "}";
+    }
+    
+    @POST
+    @Path("/test/calendar/event")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String testCalendarEvent() {
+        
+        Configuration calendar = new Configuration();
+        
+        String result;
+        
+        try {
+            if (calendar.setup()) {
+                result = "created";
+            } else {
+                result = "ready";
+            }
+        } catch (Exception e) {
+            result = "exception - " + e.getMessage();
+        }
+        
+        String eventId = "";
+        
+        if (result.equalsIgnoreCase("created") || result.equalsIgnoreCase("ready")) {
+            
+            try {
+                eventId =  calendar.createEvent("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com");
+            } catch (Exception e2) {
+                eventId = "exception - " + e2.getMessage();
+            }
+        }
+        
+        return "{"
+                + "\"result1\":\"" + result + "\","
+                + "\"result2\":\"" + eventId + "\","
+                + "}";
+    }
 }
