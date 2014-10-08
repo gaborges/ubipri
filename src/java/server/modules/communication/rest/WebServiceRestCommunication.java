@@ -5,6 +5,14 @@
 package server.modules.communication.rest;
 
 import com.sun.jersey.core.util.Base64;
+import java.io.IOException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.List;
+import java.util.TimeZone;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.UriInfo;
 import javax.ws.rs.PathParam;
@@ -15,7 +23,7 @@ import javax.ws.rs.GET;
 import javax.ws.rs.HeaderParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
-import server.modules.application.gcalendar.Configuration;
+import server.modules.application.gcalendar.CalendarManager;
 import server.modules.communication.Communication;
 import server.modules.communication.GetEnvironmentParameters;
 import server.modules.communication.InsertCommunicationCodeParameters;
@@ -313,34 +321,23 @@ public class WebServiceRestCommunication {
      * {"status":"OK"},{"status":"ERROR"} or{"status":"DENNY"}
      */
     
+    // ----------------- CALENDAR MANAGEMENT --------------------
+    
     @POST
-    @Path("/test/calendar")
+    @Path("/calendar/share")
     @Consumes("application/json")
     @Produces("application/json")
-    public String testCalendar() {
+    public String createAndShare() {
         
-        Configuration calendar = new Configuration();
-        
-        String result;
-        
-        try {
-            if (calendar.setup()) {
-                result = "created";
-            } else {
-                result = "ready";
-            }
-        } catch (Exception e) {
-            result = "exception - " + e.getMessage();
-        }
+        CalendarManager calManager = new CalendarManager();
         
         String calendarId = "";
         
-        if (result.equalsIgnoreCase("created") || result.equalsIgnoreCase("ready")) {
-            
+        if (calManager.isCalendarServiceConfigured()) {
             try {
-                calendarId =  calendar.createCalendar();
-            } catch (Exception e2) {
-                calendarId = "exception - " + e2.getMessage();
+                calendarId =  calManager.createCalendar("ServiceCalendar10", TIME_ZONE_SAO_PAULO);
+            } catch (IOException e) {
+                calendarId = "exception - " + e.getMessage();
             }
         }
         
@@ -349,53 +346,43 @@ public class WebServiceRestCommunication {
         if (!calendarId.isEmpty() && !calendarId.startsWith("exception")) {
             
             try {
-                ruleId = calendar.shareCalendar(calendarId);
-            } catch (Exception e3) {
-                ruleId = "exception - " + e3.getMessage();
+                ruleId = calManager.shareCalendar(calendarId, "user", "rmdrabach", "writer");
+            } catch (IOException e) {
+                ruleId = "exception - " + e.getMessage();
             }
         }
         
         return "{"
-                + "\"result1\":\"" + result + "\","
-                + "\"result2\":\"" + calendarId + "\","
-                + "\"result3\":\"" + ruleId + "\","
+                + "\"calendarId\":\"" + calendarId + "\","
+                + "\"ruleId\":\"" + ruleId + "\","
                 + "}";
     }
     
     @POST
-    @Path("/test/calendar/event")
+    @Path("/calendar/event")
     @Consumes("application/json")
     @Produces("application/json")
-    public String testCalendarEvent() {
+    public String createEvent() {
         
-        Configuration calendar = new Configuration();
-        
-        String result;
-        
-        try {
-            if (calendar.setup()) {
-                result = "created";
-            } else {
-                result = "ready";
-            }
-        } catch (Exception e) {
-            result = "exception - " + e.getMessage();
-        }
+        CalendarManager calManager = new CalendarManager();
         
         String eventId = "";
         
-        if (result.equalsIgnoreCase("created") || result.equalsIgnoreCase("ready")) {
-            
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(TIME_ZONE_SAO_PAULO));
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HH-MM-ss");
+        String eventName = "event-" + dateFormat.format(cal.getTime());
+        
+        if (calManager.isCalendarServiceConfigured()) {
             try {
-                eventId =  calendar.createEvent("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com");
-            } catch (Exception e2) {
-                eventId = "exception - " + e2.getMessage();
+                eventId =  calManager.createEvent("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com",
+                        eventName, "ufrgs porto alegre", new ArrayList<String>(), TIME_ZONE_SAO_PAULO);
+            } catch (IOException e) {
+                eventId = "exception - " + e.getMessage();
             }
         }
         
         return "{"
-                + "\"result1\":\"" + result + "\","
-                + "\"result2\":\"" + eventId + "\","
+                + "\"eventId\":\"" + eventId + "\""
                 + "}";
     }
 }
