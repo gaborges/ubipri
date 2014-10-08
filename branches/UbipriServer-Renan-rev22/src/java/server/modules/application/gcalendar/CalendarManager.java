@@ -29,61 +29,35 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.TimeZone;
+import org.apache.jasper.tagplugins.jstl.core.ForEach;
 
 
 /**
  *
  * @author Renan
  */
-public class Configuration {
+public class CalendarManager {
     
-    public static com.google.api.services.calendar.Calendar calService = null;
+    public static final String TIME_ZONE_SAO_PAULO = "America/Sao_Paulo";
+    public static final String EVENT_RESPONSE_STATUS_DECLINED = "declined";
+    public static final String EVENT_REMINDER_MODE_EMAIL = "email";
+    public static final String EVENT_REMINDER_MODE_SMS = "sms";
+    public static final String EVENT_REMINDER_MODE_POPUP = "popup";
     
-    public Configuration() {
-        
+    
+    private static com.google.api.services.calendar.Calendar calService = null;
+    
+    public CalendarManager() {
+        try {
+            setup();
+        } catch (GeneralSecurityException|IOException e) {
+            System.out.println(e);
+        }
     }
     
-    private void setUp1() throws IOException {
-        HttpTransport httpTransport = new NetHttpTransport();
-        JacksonFactory jsonFactory = new JacksonFactory();
-
-        // The clientId and clientSecret can be found in Google Developers Console
-        String clientId = "1060354502110-arvo6rfop11bqh3ak59t61u5d7o6kc19.apps.googleusercontent.com";
-        String clientSecret = "notasecret";
-
-        // Or your redirect URL for web based applications.
-        String redirectUrl = "urn:ietf:wg:oauth:2.0:oob";
-        String scope = "https://www.googleapis.com/auth/calendar";
-
-        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
-                    httpTransport, jsonFactory, clientId, clientSecret,
-                Arrays.asList(CalendarScopes.CALENDAR)).setAccessType("online")
-                    .setApprovalPrompt("auto").build();
-
-        String url = flow.newAuthorizationUrl().setRedirectUri(redirectUrl).build();
-        System.out.println("Please open the following URL in your browser then type the authorization code:");
-
-        System.out.println("  " + url);
-        BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
-        String code = br.readLine();
-
-        GoogleTokenResponse response = flow.newTokenRequest(code)
-                                            .setRedirectUri(redirectUrl)
-                                            .execute();
-        GoogleCredential credential = new GoogleCredential()
-                        .setFromTokenResponse(response);
-
-        // Create a new authorized API client
-        com.google.api.services.calendar.Calendar service = new com.google.api.services.calendar.Calendar.Builder(httpTransport, jsonFactory, credential)
-                                        .build();
-
-        //service.setApplicationName("YOUR_APPLICATION_NAME");
-    }
-    
-    public boolean setup() throws GeneralSecurityException, IOException {
-        
-        System.out.println("SETUP");
+    private void setup() throws GeneralSecurityException, IOException {
         
         if (calService == null) {
         
@@ -101,17 +75,18 @@ public class Configuration {
             calService = new com.google.api.services.calendar.Calendar.Builder(httpTransport, jsonFactory, credential)
                                             .setApplicationName("UFRGS-TGUbipriCalNotifMan/1.0")
                                             .build();
-            return true;
-        } else {
-            return false;
         }
     }
     
-    public String createCalendar() throws IOException {
+    public boolean isCalendarServiceConfigured() {
+        return calService != null;
+    }
+    
+    public String createCalendar(String name, String timeZone) throws IOException {
         Calendar calendar = new Calendar();
 
-        calendar.setSummary("ServiceCalendar10");
-        calendar.setTimeZone("America/Sao_Paulo");
+        calendar.setSummary(name);
+        calendar.setTimeZone(timeZone);
 
         Calendar createdCalendar = calService.calendars().insert(calendar).execute();
 
@@ -121,14 +96,14 @@ public class Configuration {
         return calendarId;
     }
     
-    public String shareCalendar(String calendarId) throws IOException {
+    public String shareCalendar(String calendarId, String scopeType, String scopeValue, String role) throws IOException {
         AclRule rule = new AclRule();
         Scope scope = new Scope();
 
-        scope.setType("user");
-        scope.setValue("rmdrabach@gmail.com");
+        scope.setType(scopeType);
+        scope.setValue(scopeValue);
         rule.setScope(scope);
-        rule.setRole("writer");
+        rule.setRole(role);
         
         AclRule createdRule = calService.acl().insert(calendarId, rule).execute();
         
@@ -138,26 +113,32 @@ public class Configuration {
         return ruleId;
     }
     
-    public String createEvent(String calendarId) throws IOException {
+    public String createEvent(String calendarId, String name, String location, List<String> attendeesEmails, String timeZone) throws IOException {
         
         Event event = new Event();
 
-        event.setSummary("teste service");
-        event.setLocation("ufrgs porto alegre");
+        event.setSummary(name);
+        event.setLocation(location);
 
-        //ArrayList<EventAttendee> attendees = new ArrayList<>();
-        //attendees.add(new EventAttendee().setEmail("attendeeEmail"));
-        //event.setAttendees(attendees);
+        ArrayList<EventAttendee> eventAttendees = new ArrayList<>();
+        
+        for (String attendeeMail : attendeesEmails) {
+            eventAttendees.add(new EventAttendee().setEmail(attendeeMail));
+        }
+        
+        if (!eventAttendees.isEmpty()) {
+            event.setAttendees(eventAttendees);
+        }
 
-        // Começa em uma hora.
-        Date startDate = new Date(new Date().getTime() + 3600000);
+        // Começa em uma (duas?) hora.
+        Date startDate = new Date(new Date().getTime() + 7200000);
         // Uma hora de duração.
         Date endDate = new Date(startDate.getTime() + 3600000);
         
-        DateTime start = new DateTime(startDate, TimeZone.getTimeZone("America/Sao_Paulo"));
+        DateTime start = new DateTime(startDate, TimeZone.getTimeZone(timeZone));
         event.setStart(new EventDateTime().setDateTime(start));
         
-        DateTime end = new DateTime(endDate, TimeZone.getTimeZone("America/Sao_Paulo"));
+        DateTime end = new DateTime(endDate, TimeZone.getTimeZone(timeZone));
         event.setEnd(new EventDateTime().setDateTime(end));
 
         Event createdEvent = calService.events().insert(calendarId, event).execute();
@@ -166,6 +147,29 @@ public class Configuration {
         System.out.println(eventId);
         
         return eventId;
+    }
+    
+    public void updateNotificationMethod(String calendarId, String userCalendarMail, String notificationMode) throws IOException {
+        Events list = calService.events().list(calendarId).execute();
+        
+        for (Event event : list.getItems()) {
+            for (EventAttendee attendee : event.getAttendees()) {
+                if (attendee.getEmail().equalsIgnoreCase(userCalendarMail)
+                    && !attendee.getResponseStatus().equalsIgnoreCase(EVENT_RESPONSE_STATUS_DECLINED)) {
+                    
+                    switch(notificationMode) {
+                        case EVENT_REMINDER_MODE_EMAIL:
+                            break;
+                        case EVENT_REMINDER_MODE_SMS:
+                            break;
+                        case EVENT_REMINDER_MODE_POPUP:
+                            break;
+                        default:
+                            break;
+                    }
+                }
+            }
+        }
     }
 
 }
