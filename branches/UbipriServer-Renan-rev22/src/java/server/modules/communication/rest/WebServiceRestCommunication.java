@@ -335,7 +335,7 @@ public class WebServiceRestCommunication {
         
         if (calManager.isCalendarServiceConfigured()) {
             try {
-                calendarId =  calManager.createCalendar("ServiceCalendar10", TIME_ZONE_SAO_PAULO);
+                calendarId =  calManager.createCalendar("ServiceCalendar10", CalendarManager.TIME_ZONE_SAO_PAULO);
             } catch (IOException e) {
                 calendarId = "exception - " + e.getMessage();
             }
@@ -368,14 +368,14 @@ public class WebServiceRestCommunication {
         
         String eventId = "";
         
-        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(TIME_ZONE_SAO_PAULO));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(CalendarManager.TIME_ZONE_SAO_PAULO));
         SimpleDateFormat dateFormat = new SimpleDateFormat("HH-MM-ss");
         String eventName = "event-" + dateFormat.format(cal.getTime());
         
         if (calManager.isCalendarServiceConfigured()) {
             try {
                 eventId =  calManager.createEvent("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com",
-                        eventName, "ufrgs porto alegre", new ArrayList<String>(), TIME_ZONE_SAO_PAULO);
+                        eventName, "ufrgs porto alegre", new ArrayList<String>(), CalendarManager.TIME_ZONE_SAO_PAULO);
             } catch (IOException e) {
                 eventId = "exception - " + e.getMessage();
             }
