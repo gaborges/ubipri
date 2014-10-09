@@ -19,18 +19,24 @@ import com.google.api.client.util.DateTime;
 
 import com.google.api.services.calendar.model.*;
 import com.google.api.services.calendar.model.AclRule.Scope;
+import com.google.api.services.calendar.model.Event.Reminders;
 
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
+import java.util.AbstractMap;
+import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.TimeZone;
+import org.apache.catalina.tribes.tipis.AbstractReplicatedMap;
 import org.apache.jasper.tagplugins.jstl.core.ForEach;
 
 
@@ -131,7 +137,7 @@ public class CalendarManager {
         }
 
         // Começa em uma (duas?) hora.
-        Date startDate = new Date(new Date().getTime() + 7200000);
+        Date startDate = new Date(new Date().getTime() + 3600000);
         // Uma hora de duração.
         Date endDate = new Date(startDate.getTime() + 3600000);
         
@@ -149,27 +155,49 @@ public class CalendarManager {
         return eventId;
     }
     
-    public void updateNotificationMethod(String calendarId, String userCalendarMail, String notificationMode) throws IOException {
-        Events list = calService.events().list(calendarId).execute();
+    public String updateNotificationMethod(String calendarId, String userCalendarMail, String notificationMode) throws IOException {
+        Events events = calService.events().list(calendarId).execute();
         
-        for (Event event : list.getItems()) {
-            for (EventAttendee attendee : event.getAttendees()) {
-                if (attendee.getEmail().equalsIgnoreCase(userCalendarMail)
-                    && !attendee.getResponseStatus().equalsIgnoreCase(EVENT_RESPONSE_STATUS_DECLINED)) {
-                    
-                    switch(notificationMode) {
-                        case EVENT_REMINDER_MODE_EMAIL:
-                            break;
-                        case EVENT_REMINDER_MODE_SMS:
-                            break;
-                        case EVENT_REMINDER_MODE_POPUP:
-                            break;
-                        default:
-                            break;
+        List<Entry<String, String>> updatedEvents = new ArrayList<>();
+        
+        List<Event> eventsList = events.getItems();
+        if (events != null) {
+            
+            for (Event event : eventsList) {
+
+                List<EventAttendee> eventAttendeeList = event.getAttendees();
+                if (eventAttendeeList != null) {
+                
+                    for (EventAttendee attendee : event.getAttendees()) {
+                        if (attendee.getEmail().equalsIgnoreCase(userCalendarMail)
+                            && !attendee.getResponseStatus().equalsIgnoreCase(EVENT_RESPONSE_STATUS_DECLINED)) {
+
+                            EventReminder reminder = new EventReminder();
+                            reminder.setMethod(notificationMode);
+                            reminder.setMinutes(15);
+
+                            ArrayList<EventReminder> remindersList = new ArrayList<>();
+                            remindersList.add(reminder);
+
+                            Reminders reminders = new Reminders();
+                            reminders.setOverrides(remindersList);
+                            reminders.setUseDefault(false);
+
+                            event.setReminders(reminders);
+
+                            Event updatedEvent = calService.events().update(calendarId, event.getId(), event).execute();
+
+                            Entry<String, String> eventIdNotifMethodPair = new SimpleEntry<>(updatedEvent.getId(), updatedEvent.getReminders().getOverrides().get(0).getMethod());
+                            System.out.println(eventIdNotifMethodPair);
+
+                            updatedEvents.add(eventIdNotifMethodPair);
+                        }
                     }
                 }
             }
         }
+        
+        return Integer.toString(updatedEvents.size());
     }
 
 }

@@ -366,16 +366,19 @@ public class WebServiceRestCommunication {
         
         CalendarManager calManager = new CalendarManager();
         
-        String eventId = "";
-        
         Calendar cal = Calendar.getInstance(TimeZone.getTimeZone(CalendarManager.TIME_ZONE_SAO_PAULO));
-        SimpleDateFormat dateFormat = new SimpleDateFormat("HH-MM-ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("HHmmss");
         String eventName = "event-" + dateFormat.format(cal.getTime());
+        
+        ArrayList<String> attendeesEmails = new ArrayList<>();
+        attendeesEmails.add("rmdrabach@gmail.com");
+        
+        String eventId = "";
         
         if (calManager.isCalendarServiceConfigured()) {
             try {
                 eventId =  calManager.createEvent("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com",
-                        eventName, "ufrgs porto alegre", new ArrayList<String>(), CalendarManager.TIME_ZONE_SAO_PAULO);
+                        eventName, "ufrgs porto alegre", attendeesEmails, CalendarManager.TIME_ZONE_SAO_PAULO);
             } catch (IOException e) {
                 eventId = "exception - " + e.getMessage();
             }
@@ -383,6 +386,30 @@ public class WebServiceRestCommunication {
         
         return "{"
                 + "\"eventId\":\"" + eventId + "\""
+                + "}";
+    }
+    
+    @POST
+    @Path("/calendar/event/update")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String updateEvent() {
+        
+        CalendarManager calManager = new CalendarManager();
+        
+        String updatedEvents = "";
+        
+        if (calManager.isCalendarServiceConfigured()) {
+            try {
+                updatedEvents =  calManager.updateNotificationMethod("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com", 
+                        "rmdrabach@gmail.com", CalendarManager.EVENT_REMINDER_MODE_SMS);
+            } catch (IOException e) {
+                updatedEvents = "exception - " + e.getMessage();
+            }
+        }
+        
+        return "{"
+                + "\"updatedEvents\":\"" + updatedEvents + "\""
                 + "}";
     }
 }
