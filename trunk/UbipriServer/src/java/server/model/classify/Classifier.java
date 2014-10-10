@@ -33,7 +33,16 @@ public interface Classifier<V> {
             1;"Blocked"
             2;"Private"
             3;"Public"
+    Saídas
+        1 = "Blocked"
+        2 = "Guest"
+        3 = "Basic"
+        4 = "Advanced"
+        5 = "Administrative"
+    
     */
+    
+    
     public AccessType classify(UserProfileEnvironment profile, EnvironmentType typeEnvironment, Character shift, Character workday, Integer weekday);
     public void setExtraConfigurations(HashMap<String,V> map);
 }
