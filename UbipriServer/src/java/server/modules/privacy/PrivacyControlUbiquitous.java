@@ -286,7 +286,9 @@ public class PrivacyControlUbiquitous {
     private ArrayList<Action> getListActions(User userEnvironment, Device device, LogEvent event) {
         int i, j;
         // Gera o classificador
-        Classifier classifier = ClassifierFactory.create("NotImplemented"); // Não implementado
+        Classifier classifier = 
+                //ClassifierFactory.create("NotImplemented"); // Não implementado
+                ClassifierFactory.create("RandomTreeBorges"); // RandomTree provisório implementado pelo Borges
         // Classifica o tipo de acesso baseado nos 5 parâmetros (Profile,Tipo de Ambiente,Turno,Dia útil, Dia de semana)
         AccessType accessTypeClassified  = classifier.classify(
                 userEnvironment.getUsersEnvironment().getUserProfile(), // Tipo de Profile: 1;"Unknown" 2;"Transient" 3;"User" 4;"Responsible" 5;"Student" 6;"Manager"
