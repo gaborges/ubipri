@@ -14,9 +14,17 @@
         </init-param>
         <load-on-startup>1</load-on-startup>
     </servlet>
+    <servlet>
+        <servlet-name>HandleAuthorize</servlet-name>
+        <servlet-class>HandleAuthorize</servlet-class>
+    </servlet>
     <servlet-mapping>
         <servlet-name>ServletAdaptor</servlet-name>
         <url-pattern>/webresources/*</url-pattern>
+    </servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>HandleAuthorize</servlet-name>
+        <url-pattern>/HandleAuthorize</url-pattern>
     </servlet-mapping>
     <session-config>
         <session-timeout>

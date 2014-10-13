@@ -6,13 +6,14 @@
 package server.modules.application.gcalendar;
 
 import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeFlow;
+import com.google.api.client.googleapis.auth.oauth2.GoogleAuthorizationCodeTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleCredential;
+import com.google.api.client.googleapis.auth.oauth2.GoogleRefreshTokenRequest;
 import com.google.api.client.googleapis.auth.oauth2.GoogleTokenResponse;
 import com.google.api.client.googleapis.javanet.GoogleNetHttpTransport;
 import com.google.api.services.calendar.CalendarScopes;
 
 import com.google.api.client.http.HttpTransport;
-import com.google.api.client.http.javanet.NetHttpTransport;
 import com.google.api.client.json.JsonFactory;
 import com.google.api.client.json.jackson2.JacksonFactory;
 import com.google.api.client.util.DateTime;
@@ -21,23 +22,17 @@ import com.google.api.services.calendar.model.*;
 import com.google.api.services.calendar.model.AclRule.Scope;
 import com.google.api.services.calendar.model.Event.Reminders;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.security.GeneralSecurityException;
-import java.util.AbstractMap;
 import java.util.AbstractMap.SimpleEntry;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
 import java.util.TimeZone;
-import org.apache.catalina.tribes.tipis.AbstractReplicatedMap;
-import org.apache.jasper.tagplugins.jstl.core.ForEach;
 
 
 /**
@@ -52,12 +47,12 @@ public class CalendarManager {
     public static final String EVENT_REMINDER_MODE_SMS = "sms";
     public static final String EVENT_REMINDER_MODE_POPUP = "popup";
     
-    
     private static com.google.api.services.calendar.Calendar calService = null;
     
     public CalendarManager() {
         try {
-            setup();
+            //setup();
+            authorize();
         } catch (GeneralSecurityException|IOException e) {
             System.out.println(e);
         }
@@ -82,6 +77,57 @@ public class CalendarManager {
                                             .setApplicationName("UFRGS-TGUbipriCalNotifMan/1.0")
                                             .build();
         }
+    }
+    
+    private void authorize() throws IOException, GeneralSecurityException {
+        
+        HttpTransport httpTransport = GoogleNetHttpTransport.newTrustedTransport();
+        JsonFactory jsonFactory = JacksonFactory.getDefaultInstance();
+        
+        String client_id = "1060354502110-ho0eica6il5t0hgvcdd80iiu9ee2ve2u.apps.googleusercontent.com";
+        String client_secret = "cEHqpFFyxIDIVCP6a9QaFTXs";
+        
+        GoogleAuthorizationCodeFlow flow = new GoogleAuthorizationCodeFlow.Builder(
+            httpTransport, jsonFactory, client_id, client_secret, 
+                Arrays.asList(CalendarScopes.CALENDAR))
+            .setAccessType("offline")
+            .setApprovalPrompt("auto")
+            .build();
+        
+        String firstAccessToken = "4/gP83ZfVK9boLfYsTRSn9jg.cs4EPwOx-gMVJvIeHux6iLYFYrsMkgI";
+        String refreshToken = "1/tSn8DzB6KfhaT8ExeNNSJpA7EpvYjDaTyQF1f3WI_J0";
+        
+        GoogleTokenResponse response;
+        
+        if (!refreshToken.isEmpty()) {
+            response = new GoogleRefreshTokenRequest(
+                httpTransport, jsonFactory, refreshToken, client_id, client_secret)
+                .execute();
+        } else {
+            response = flow.newTokenRequest(firstAccessToken)
+                .setRedirectUri("http://localhost:8084/UbipriServer/HandleAuthorize")
+                .setGrantType("authorization_code")
+                .execute();
+        }
+        
+        System.out.println(response.toString());
+        
+        // http://stackoverflow.com/questions/15064636/googlecredential-wont-build-without-googlecredential-builder
+        // Para "online" mode
+        // GoogleCredential credential = new GoogleCredential().setFromTokenResponse(response);
+        // Para "offline" mode
+        GoogleCredential credential = new GoogleCredential.Builder()
+            .setTransport(httpTransport)
+            .setJsonFactory(jsonFactory)
+            .setClientSecrets("1060354502110-ho0eica6il5t0hgvcdd80iiu9ee2ve2u.apps.googleusercontent.com", 
+                    "cEHqpFFyxIDIVCP6a9QaFTXs")
+            .build()
+            .setFromTokenResponse(response);
+
+        // Create a new authorized API client
+        calService = new com.google.api.services.calendar
+            .Calendar.Builder(httpTransport, jsonFactory,credential)
+            .build();
     }
     
     public boolean isCalendarServiceConfigured() {
@@ -160,9 +206,9 @@ public class CalendarManager {
         
         List<Entry<String, String>> updatedEvents = new ArrayList<>();
         
-        List<Event> eventsList = events.getItems();
         if (events != null) {
             
+            List<Event> eventsList = events.getItems();
             for (Event event : eventsList) {
 
                 List<EventAttendee> eventAttendeeList = event.getAttendees();
@@ -174,7 +220,7 @@ public class CalendarManager {
 
                             EventReminder reminder = new EventReminder();
                             reminder.setMethod(notificationMode);
-                            reminder.setMinutes(15);
+                            reminder.setMinutes(10);
 
                             ArrayList<EventReminder> remindersList = new ArrayList<>();
                             remindersList.add(reminder);
