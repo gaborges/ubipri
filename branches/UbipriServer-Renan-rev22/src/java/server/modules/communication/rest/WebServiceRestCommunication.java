@@ -323,11 +323,11 @@ public class WebServiceRestCommunication {
     
     // ----------------- CALENDAR MANAGEMENT --------------------
     
-    @POST
-    @Path("/calendar/share")
+    @PUT
+    @Path("/calendar")
     @Consumes("application/json")
     @Produces("application/json")
-    public String createAndShare() {
+    public String create() {
         
         CalendarManager calManager = new CalendarManager();
         
@@ -335,30 +335,42 @@ public class WebServiceRestCommunication {
         
         if (calManager.isCalendarServiceConfigured()) {
             try {
-                calendarId =  calManager.createCalendar("ServiceCalendar10", CalendarManager.TIME_ZONE_SAO_PAULO);
+                calendarId =  calManager.createCalendar("SharedCalendar", CalendarManager.TIME_ZONE_SAO_PAULO);
             } catch (IOException e) {
                 calendarId = "exception - " + e.getMessage();
             }
         }
         
+        return "{"
+                + "\"calendarId\":\"" + calendarId + "\""
+                + "}";
+    }
+    
+    @POST
+    @Path("/calendar/share")
+    @Consumes("application/json")
+    @Produces("application/json")
+    public String share() {
+        
+        CalendarManager calManager = new CalendarManager();
+        
         String ruleId = "";
         
-        if (!calendarId.isEmpty() && !calendarId.startsWith("exception")) {
-            
+        if (calManager.isCalendarServiceConfigured()) {
             try {
-                ruleId = calManager.shareCalendar(calendarId, "user", "rmdrabach", "writer");
+                ruleId = calManager.shareCalendar("v8175sgm6ltoutn1a2prklvugk@group.calendar.google.com", 
+                        "user", "rmdrabach@gmail.com", "writer");
             } catch (IOException e) {
                 ruleId = "exception - " + e.getMessage();
             }
         }
         
         return "{"
-                + "\"calendarId\":\"" + calendarId + "\","
-                + "\"ruleId\":\"" + ruleId + "\","
+                + "\"ruleId\":\"" + ruleId + "\""
                 + "}";
     }
     
-    @POST
+    @PUT
     @Path("/calendar/event")
     @Consumes("application/json")
     @Produces("application/json")
@@ -371,13 +383,13 @@ public class WebServiceRestCommunication {
         String eventName = "event-" + dateFormat.format(cal.getTime());
         
         ArrayList<String> attendeesEmails = new ArrayList<>();
-        attendeesEmails.add("rmdrabach@gmail.com");
+        //attendeesEmails.add("rmdrabach@gmail.com");
         
         String eventId = "";
         
         if (calManager.isCalendarServiceConfigured()) {
             try {
-                eventId =  calManager.createEvent("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com",
+                eventId =  calManager.createEvent("v8175sgm6ltoutn1a2prklvugk@group.calendar.google.com",
                         eventName, "ufrgs porto alegre", attendeesEmails, CalendarManager.TIME_ZONE_SAO_PAULO);
             } catch (IOException e) {
                 eventId = "exception - " + e.getMessage();
@@ -401,7 +413,8 @@ public class WebServiceRestCommunication {
         
         if (calManager.isCalendarServiceConfigured()) {
             try {
-                updatedEvents =  calManager.updateNotificationMethod("l5ue3dhpde2fjcqvpsrb5phpv4@group.calendar.google.com", 
+                updatedEvents =  calManager.updateNotificationMethod(
+                        "v8175sgm6ltoutn1a2prklvugk@group.calendar.google.com", 
                         "rmdrabach@gmail.com", CalendarManager.EVENT_REMINDER_MODE_SMS);
             } catch (IOException e) {
                 updatedEvents = "exception - " + e.getMessage();
