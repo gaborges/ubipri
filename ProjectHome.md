@@ -1,0 +1,1 @@
+Servidor de privacidade que gera ações baseados na entrada de usuários em ambientes.
