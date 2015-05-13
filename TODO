@@ -1,0 +1,57 @@
+
+# PUT for creating/updating the whole object (with id)
+# POST for creating object without id or updating some field(s)
+
+
+PUT    /user/:name                  Create a new user
+
+# devices
+
+GET    /user/:name/devices          List the user's devices
+POST   /user/:name/devices          Add a new device for the user
+
+GET    /user/:name/devices/:id      Get the device information
+PUT    /user/:name/devices/:id      Update the device information
+DELETE /user/:name/devices/:id      Removes the device
+
+# device functionalities (functionalities are independent of device)
+
+GET    /user/:name/devices/:dev_id/functionalities List the device's functionalities
+POST   /user/:name/devices/:dev_id/functionalities Add a new functionality to the device
+
+GET    /user/:name/devices/:dev_id/functionalities/:fn_id Get the functionality information
+PUT    /user/:name/devices/:dev_id/functionalities/:fn_id Update the functionality information
+DELETE /user/:name/devices/:dev_id/functionalities/:fn_id Delete the functionality
+
+# device communications
+
+GET    /user/:name/devices/:dev_id/communications List the device's communications
+POST   /user/:name/devices/:dev_id/communications Add a new communication to the device
+
+GET    /user/:name/devices/:dev_id/communications/:comm_id Get the communication information
+PUT    /user/:name/devices/:dev_id/communications/:comm_id Update the communication information
+DELETE /user/:name/devices/:dev_id/communications/:comm_id Delete the communication
+
+
+# environments
+
+GET    /environments          List the environments
+POST   /environments          Add a new environment
+
+GET    /environments/:id      Get the environment information
+PUT    /environments/:id      Update the environment information
+DELETE /environments/:id      Removes the environment
+
+# environment points
+
+GET    /environments/:env_id/points          List the environment points
+POST   /environments/:env_id/points          Add a new environment point
+
+GET    /environments/:env_id/points/:id      Get the environment point information
+PUT    /environments/:env_id/points/:id      Update the environment point information
+DELETE /environments/:env_id/points/:id      Removes the environment point
+
+
+# log event
+
+POST   /log          Add a new location update
